@@ -72,11 +72,15 @@ $(function() {
             tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
             var responseHTML = tweeter + '\
               <blockquote>\
-                <strong><cite>'
-                  +response.quoteText+
-                '</cite></strong><br/>\
-                <small>'+response.quoteAuthor+'</small>\
-				       </blockquote>';
+                <strong><cite>\
+                  <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
+                    '+response.quoteText+'</a>\
+                </cite></strong><br/>\
+                <small>\
+                  <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
+                    '+response.quoteAuthor+'</a>\
+                </small>\
+				      </blockquote>';
             
             console.log (responseHTML);
             $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
