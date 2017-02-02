@@ -69,7 +69,7 @@ $(function() {
             var tweeter = '<div id=\"share\">\
               <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
             tweeter = tweeter + response.quoteText; 
-            tweeter = tweeter + '\ @lifebalance\ title="Write"</a></div>';
+            tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
             var responseHTML = tweeter + '\
               <blockquote>\
                 <strong><cite>'
