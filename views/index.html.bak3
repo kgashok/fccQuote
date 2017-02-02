@@ -1,0 +1,149 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+
+<!-- You might want to try something fancier: -->
+<!-- html/nunjucks docs: http://mozilla.github.io/nunjucks/ -->
+<!-- jade: http://jade-lang.com/ -->
+<!-- haml: http://haml.info/tutorial.html -->
+<!-- hbs(handlebars): http://handlebarsjs.com/expressions.html -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> CSE_Knowledge Bot!</title>
+    <meta name="description" content="A cool thing made with HyperDev">
+    <link id="favicon" rel="icon" href="http://bit.ly/geniusIcon" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script type="text/javascript" src="https://rawgit.com/kgashok/fuzzy/master/elm.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>
+        Questions, questions galore. 
+      </h1>
+      
+    </header>
+
+    <fb:login-button scope="public_profile,user_friends" autologoutlink="true" onlogin="OnRequestPermission();">  
+    </fb:login-button>
+    
+    <div id="fb-root"></div>
+
+    <main>
+      
+      <section class="whoami">
+        <ul id="whoami">
+        </ul>
+      </section>
+      <p class="bold">Oh, hello there!</p>
+      <div>
+        <il>1. Choose a knowledge base (default is 'cse') between 'cse, 'ds' (data structures) or 'cpp' (C++).</il><br>
+        <il>2. Enter your question in the dialog below and press <b>[ENTER]</b></il><br>
+        <il>3. Wait for 1-2 seconds. If the answer does not appear, press Ctrl-R to refresh! </il><br>
+      </div>
+      <form>
+        <label> Knowledge base</label>
+        <input id="kid"   type="text" maxlength="100" placeholder="cse">
+        <label> Question</label>
+        <input id="query" type="text" maxlength="100" placeholder="Queries!">
+        <button type="submit">Submit</button>
+      </form>
+      <p>
+          <a href="https://github.com/kgashok/shiny-waffle/issues/new" target="_">Want to give App feedback? </a>
+          or is it an <a href="https://github.com/kgashok/shiny-waffle/issues/8" target="_">incorrect response?</a>
+          or <a href="https://saythanks.io/to/kgashok">
+              <button class="button"> Say Thanks! </button>
+            </a>
+      </p>
+      <div class="three columns">
+      </div>
+      <section class="questions">
+        <ul id="questions">
+        </ul>
+      </section>
+      <div id="ElmBracket"></div>
+    </main>
+
+    <div
+      class="fb-like"
+      data-share="true"
+      data-width="450"
+      data-show-faces="true">
+    </div>
+
+    <footer>
+      <a href="https://hyperdev.com">
+        Remix this in HyperDev
+      </a>
+    </footer>
+
+    <!-- Your web-app is https, so your scripts need to be too -->
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+    <script src="/client.js"></script>
+    <script src="/fbg.js"></script>
+    <script> 
+      var node = document.getElementById('ElmBracket'); 
+      var app  = Elm.Bracket.embed(node); 
+    </script>
+    
+    <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  </body>
+</html>

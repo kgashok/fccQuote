@@ -1,0 +1,142 @@
+/* styles */
+/* called by your view template */
+
+/* You might want to try something fancier: */
+/* less: http://lesscss.org/ */
+
+/*
+.module {
+  margin: 10px;
+  width: 600px;
+  height: 800px;
+  float: left;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoes.jpg);
+  background-size: cover;
+}
+.darken {
+  background-image: 
+    linear-gradient(
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoes.jpg);
+}
+*/
+
+div#share>a, a.noscr{
+	float:left;
+	display:block;
+	background:url(https://cdn.gomix.com/bf1bd29b-8d14-43b2-86cb-cb2a443cab08%2FtwitterIcons.png) no-repeat;
+	width:20px;
+	height:20px;
+	margin-top:20px;
+	outline:none
+}
+
+a#t {
+	background-position:0 -1px !important;
+}
+a#t:hover {
+	background-position:0 -21px !important
+}
+a#vk {
+	background-position:1px -41px !important;
+	margin:16px 6px 0 0
+}
+a#vk:hover {
+	background-position:1px -61px !important
+}
+a#f {
+	background-position:1px -81px !important;
+}
+a#f:hover {
+	background-position:1px -101px !important
+}
+
+
+
+body {
+    background-color: beige;
+    /*background-image: url("http://blog-imgs-92.fc2.com/s/l/o/slorakusyou/hate.jpg");*/
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: helvetica, arial, sans-serif;
+  margin: 25px;
+}
+
+li { background: white; }
+li:nth-child(odd) { background: silver; }
+
+h1 {
+  font-weight: bold;
+  color: darkorange;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+p {
+  max-width: 600px;
+}
+
+form {
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: cyan;
+  display: inline-block;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 3px;
+}
+
+input {
+  display: block;
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 100%;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  font-size: 16px;
+}
+
+button {
+  font-size: 16px;
+  border-radius: 3px;
+  background-color: lightgrey;
+  border: 1px solid grey;
+  box-shadow: 2px 2px teal;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: yellow;
+}
+
+button:active {
+  box-shadow: none;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+footer {
+  margin-top: 50px;
+  padding-top: 25px;
+  border-top: 1px solid lightgrey;
+}
+
+footer > a {
+  color: #BBBBBB;
+}
+
+.nicejob {
+  text-decoration: line-through;
+}

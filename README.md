@@ -1,2 +1,2 @@
-# fccQuote
-Random Quote Generator
+# Quote Generator
+

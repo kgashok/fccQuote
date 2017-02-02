@@ -1,0 +1,91 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+
+<!-- You might want to try something fancier: -->
+<!-- html/nunjucks docs: http://mozilla.github.io/nunjucks/ -->
+<!-- jade: http://jade-lang.com/ -->
+<!-- haml: http://haml.info/tutorial.html -->
+<!-- hbs(handlebars): http://handlebarsjs.com/expressions.html -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> CSE_Knowledge Bot!</title>
+    <meta name="description" content="A cool thing made with HyperDev">
+    <link id="favicon" rel="icon" href="http://bit.ly/geniusIcon" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    
+    <header>
+      <h1>
+        Questions, questions galore. 
+      </h1>
+      
+    </header>
+
+    <fb:login-button scope="public_profile,user_friends" autologoutlink="true" onlogin="OnRequestPermission();">  
+    </fb:login-button>
+    
+    <div id="fb-root"></div>
+
+    <main>
+      
+      <section class="whoami">
+        <ul id="whoami">
+        </ul>
+      </section>
+      <p class="bold">Oh, hello there!</p>
+      <div>
+        <il>1. Choose a knowledge base (default is 'cse') between 'cse, 'ds' (data structures) or 'cpp' (C++).</il><br>
+        <il>2. Enter your question in the dialog below and press <b>[ENTER]</b></il><br>
+        <il>3. Wait for 1-2 seconds. If the answer does not appear, press Ctrl-R to refresh! </il><br>
+      </div>
+      <form>
+        <label> Knowledge base</label>
+        <input id="kid"   type="text" maxlength="100" placeholder="cse">
+        <label> Question</label>
+        <input id="query" type="text" maxlength="100" value="algorithms" placeholder="Queries!">
+        <button type="submit">Get Answer!</button>
+      </form>
+      <button type="submit" onclick="clearTheBox()">Reset (on the server!)</button>
+      <p>
+          <a href="https://github.com/kgashok/shiny-waffle/issues/new" target="_">Want to give App feedback? </a>
+          or is it an <a href="https://github.com/kgashok/shiny-waffle/issues/8" target="_">incorrect response?</a>
+          or <a href="https://saythanks.io/to/kgashok">
+              <button class="button"> Say Thanks! </button>
+            </a>
+      </p>
+      <div class="three columns">
+      </div>
+      <section class="responses">
+        <ul id="responses">
+        </ul>
+      </section>
+    </main>
+
+    <div
+      class="fb-like"
+      data-share="true"
+      data-width="450"
+      data-show-faces="true">
+    </div>
+
+    <footer>
+      <a href="https://hyperdev.com">
+        Remix this in HyperDev
+      </a>
+    </footer>
+
+    <!-- Your web-app is https, so your scripts need to be too -->
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+    <script src="/client.js"></script>
+    <script src="/fbg.js"></script>
+
+  </body>
+</html>
