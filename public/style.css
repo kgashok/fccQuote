@@ -53,10 +53,17 @@ a#f:hover {
 	background-position:1px -101px !important
 }
 
+a#quote:hover {
+  color: blue;  
+}
+
 a#quote {
-  color: blue;
+  color: black;  
+  font-weight: bolder;
   text-decoration: none; /* no underline */
 }
+
+
 
 body {
     background-color: beige;
