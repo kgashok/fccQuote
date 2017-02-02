@@ -39,13 +39,8 @@ $(function() {
     // We need to figure out two arguments to make 
     // the POST call 
     // Step 1 - prepare the knowledge URL to send query 
-    var kid = $("#kid").val();
     // Step 2 - get the Question for which we want to find answers
-    var question = $("#query").val();
-    if (question.length === 0)
-      return;
-    var args = {"question": question, "kid": kid};
-    var fullRoute = "/responses?" + $.param(args); 
+    var fullRoute = "/responses?"; 
     // console.log (fullRoute);
     // for e.g.
     //   https://roomy-plate.gomix.me/response?questions=algorithm&kid=cse
