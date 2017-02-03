@@ -71,7 +71,7 @@ $(function() {
             tweeter = tweeter + response.quoteText; 
             tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
             var responseHTML = tweeter + '\
-              <blockquote>\
+              <blockquote class="quote">\
                 <strong><cite>\
                   <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
                     '+response.quoteText+'</a>\

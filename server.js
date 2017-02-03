@@ -22,7 +22,7 @@ app.get("/", function (request, response) {
 });
 
 app.get("/responses", function (request, response) {
-  response.send(respondList);
+  response.send(quoteList);
 });
 
 // could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
@@ -36,15 +36,15 @@ app.post("/responses", function (request, response) {
     console.log("PATH:: " + resp.request.path); 
     console.log("resp.body: " + resp.body);
     var responseQA = resp.body;
-    respondList.unshift(responseQA);
-    console.log(respondList);
+    quoteList.unshift(responseQA);
+    console.log(quoteList);
     // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);
     //response.send(resp.request.path + " :("+ resp.body.score +")" + resp.body.answer);
     // response.send ("junk");
   
   });
   //response.sendStatus(200);
-  response.send(respondList[respondList.length-1]);
+  response.send(quoteList[quoteList.length-1]);
 });
 
 var lookup = {
@@ -81,11 +81,7 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
 
 
 // Simple in-memory store for now
-var respondList = [
-  "What is a data structure?",
-  "What is a linked list?",
-  "Is linked list non-linear?"
-  ];
+var quoteList = [];
 
 
 // listen for requests :)

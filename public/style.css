@@ -23,6 +23,7 @@
 }
 */
 
+
 div#share>a, a.noscr{
 	float:left;
 	display:block;
@@ -63,7 +64,9 @@ a#quote {
   text-decoration: none; /* no underline */
 }
 
-
+.quote { 
+  font-size: 20px; 
+}
 
 body {
     background-color: beige;
