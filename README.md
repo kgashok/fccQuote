@@ -4,3 +4,8 @@
 2. Click on the author to know more about him on Wikipedia
 3. Click on the actual quote itself to generate a Printable version
 
+## API Used 
+
+http://forismatic.com/en/api/ 
+  - I first used the output in the HTML version 
+  - And then switched to the JSON version to make it more versatile 
