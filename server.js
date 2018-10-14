@@ -47,14 +47,9 @@ app.post("/responses", function (request, response) {
   response.send(quoteList[quoteList.length-1]);
 });
 
-var lookup = {
-  "cse": "8c59a93f-1622-4ce3-b848-dcc56f10f2b0",
-  "ds" : "b693c8be-313c-434d-b3a7-dad2d4656039",
-  "cpp": "ed3f0ded-b71e-43ff-93c6-a34454702b64"
-}
 
 /*
- * STEP 1 : Setup the URL to point at the Microsoft Q&A service
+ * STEP 1 : Setup the URL to point at the Forismatic API
  * STEP 2 : Build the query 
  * STEP 3 : Make the Unirest POST call
  */
@@ -69,6 +64,7 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
   payload = {}; 
 
   // STEP 3
+
   rest.get(builder)
     .end(function funcToInvokeAfterQandA (responseFromQandA) {  
       if (funcToInvokeAfterUnirestPOST)  // Was a callback function specified? 
@@ -76,7 +72,6 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
       else  // otherwise send the response to the console 
         console.log(responseFromQandA.body);
     });
-  
 }
 
 

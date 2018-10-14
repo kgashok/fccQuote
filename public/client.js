@@ -44,6 +44,22 @@ $(function() {
     // console.log (fullRoute);
     // for e.g.
     //   https://roomy-plate.gomix.me/response?questions=algorithm&kid=cse
+    /*var builder = "https://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en";
+    builder = "https://crossorigin.me/http://api.icndb.com/jokes/random";
+    $.ajax({
+      url: builder,
+      json: "callback",
+      type: "GET",
+      dataType: "json",
+      success: function (data) {
+        //$("#author").remove();
+        //$("#quote").append(data["value"]["joke"]);
+        console.log(data);
+      },
+      xhrFields: {
+        withCredentials: false
+      }
+    });  */
     
     // prepare the POST request to the server
     $.post(fullRoute, function funcInvokedAfterPOST(postInfo) {
@@ -52,45 +68,48 @@ $(function() {
       // Before we can "refresh" to get the results,
       // we invoke a setTimeOut with a callback function
       console.log ("Back from Server call: " + postInfo);
-      window.setTimeout(function afterTimeOut(){
-        // reloads and displays answer + previous answers
-        // there must be a more efficient way of doing this
-        // location = location;
-        //location.reload(true);
-        $.get("/responses", function (responses) {
-          $("ul#responses").empty();
-          responses.forEach(function(response) {
-            console.log (response.quoteText);
-            //console.log (response); 
-            /*$('<li></li>').text(response.quoteText 
-                                + "-" 
-                                + response.quoteAuthor).appendTo('ul#responses');
-            */
-            var tweeter = '<div id=\"share\">\
-              <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
-            tweeter = tweeter + response.quoteText; 
-            tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
-            var responseHTML = tweeter + '\
-              <blockquote class="quote">\
-                <strong><cite>\
-                  <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
-                    '+response.quoteText+'</a>\
-                </cite></strong><br/>\
-                <small>\
-                  <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
-                    '+response.quoteAuthor+'</a>\
-                </small>\
-				      </blockquote>';
-            
-            console.log (responseHTML);
-            $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
- 
+      if (postInfo !== undefined) {
+
+        window.setTimeout(function afterTimeOut(){
+          // reloads and displays answer + previous answers
+          // there must be a more efficient way of doing this
+          // location = location;
+          //location.reload(true);
+          $.get("/responses", function (responses) {
+            $("ul#responses").empty();
+            responses.forEach(function(response) {
+              //console.log (response.quoteText);
+              //console.log (response); 
+              /*$('<li></li>').text(response.quoteText 
+                                  + "-" 
+                                  + response.quoteAuthor).appendTo('ul#responses');
+              */
+              var tweeter = '<div id=\"share\">\
+                <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
+              tweeter = tweeter + response.quoteText; 
+              tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
+              var responseHTML = tweeter + '\
+                <blockquote class="quote">\
+                  <strong><cite>\
+                    <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
+                      '+response.quoteText+'</a>\
+                  </cite></strong><br/>\
+                  <small>\
+                    <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
+                      '+response.quoteAuthor+'</a>\
+                  </small>\
+                </blockquote>';
+
+              //console.log (responseHTML);
+              $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
+
+            });
+            // $("#responses").html(data);  
           });
-          // $("#responses").html(data);  
-        });
-        $("#query").focus();
-      },1500);  // some arbitrary value - may not be sufficient
-      console.log ("*** Reaching end of POST call");    
+          $("#query").focus();
+        },1500);  // some arbitrary value - may not be sufficient
+        console.log ("*** Reaching end of POST call");    
+      }
     }); // end of post call
     console.log ("*** Reaching end of Submit call");
 
