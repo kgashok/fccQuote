@@ -30,8 +30,8 @@ $(function() {
   });
 
 
-  // This is invoked when the question has been entered 
-  // and the "Get Answer!" button is clicked
+  // function that is invoked when the "Get Quote" button 
+  // is pressed
   $('form').submit(function(event) {
     console.log ("Inside submit");
     event.preventDefault();
@@ -41,26 +41,7 @@ $(function() {
     // Step 1 - prepare the knowledge URL to send query 
     // Step 2 - get the Question for which we want to find answers
     var fullRoute = "/responses?"; 
-    // console.log (fullRoute);
-    // for e.g.
-    //   https://roomy-plate.gomix.me/response?questions=algorithm&kid=cse
-    /*var builder = "https://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en";
-    builder = "https://crossorigin.me/http://api.icndb.com/jokes/random";
-    $.ajax({
-      url: builder,
-      json: "callback",
-      type: "GET",
-      dataType: "json",
-      success: function (data) {
-        //$("#author").remove();
-        //$("#quote").append(data["value"]["joke"]);
-        console.log(data);
-      },
-      xhrFields: {
-        withCredentials: false
-      }
-    });  */
-    
+
     // prepare the POST request to the server
     $.post(fullRoute, function funcInvokedAfterPOST(postInfo) {
       // this is the callback function which gets
@@ -68,7 +49,7 @@ $(function() {
       // Before we can "refresh" to get the results,
       // we invoke a setTimeOut with a callback function
       console.log ("Back from Server call: " + postInfo);
-      if (postInfo !== undefined) {
+      if (postInfo !== "undefined") {
 
         window.setTimeout(function afterTimeOut(){
           // reloads and displays answer + previous answers
@@ -106,7 +87,7 @@ $(function() {
             });
             // $("#responses").html(data);  
           });
-          $("#query").focus();
+          $("#quoteButton").focus();
         },1500);  // some arbitrary value - may not be sufficient
         console.log ("*** Reaching end of POST call");    
       }
