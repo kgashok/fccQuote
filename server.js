@@ -1,14 +1,14 @@
 // server.js
 // where your node app starts
 
+// init project
+var express = require('express');
+var app = express();
+
 var rest = require('unirest');
 /*require(['unirest'], function (unirest) {
     //foo is now loaded.
 });*/
-
-// init project
-var express = require('express');
-var app = express();
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -37,8 +37,6 @@ app.post("/responses", function (request, response) {
     console.log("PATH:: " + resp.request.path); 
     console.log("resp.body: " + resp.body);
     var responseQA = resp.body;
-    //if (isJsonString(responseQA) === false) 
-    //  responseQA = JSON.parse(responseQA); 
     
     quoteList.unshift(responseQA);
     console.log(quoteList);
@@ -54,22 +52,26 @@ app.post("/responses", function (request, response) {
 
 /*
  * STEP 1 : Setup the URL to point at the Forismatic API
- * STEP 2 : Build the query 
+ * STEP 2 : Build the query with a random number 
  * STEP 3 : Make the Unirest POST call
  */
 function getAnswer (query, funcToInvokeAfterUnirestPOST) {
   
-  var builder = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en";
+  var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en";
   // builder = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=html&lang=en";
   // STEP 2
   //var payload = "{\"question\":\"Why bother with hashing?\"}";
   //var payload = {"question": "What is hashing?"};
-  var payload = {"question": query.question};
-  payload = {}; 
+  //console.log("****** Query", query.question);
+  //var payload = {"key": query.question, "lang": "en"};
+  var payload = {"key": "457653", "lang": "en"};
+  //payload = {}; 
 
   // STEP 3
 
-  rest.get(builder)
+  rest.get(quoteApi)
+    .type('json')
+    .send(payload)
     .end(function funcToInvokeAfterQandA (responseFromQandA) {  
       if (funcToInvokeAfterUnirestPOST)  // Was a callback function specified? 
         funcToInvokeAfterUnirestPOST(responseFromQandA);

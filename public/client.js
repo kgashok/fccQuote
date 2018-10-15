@@ -77,7 +77,7 @@ $(function() {
                                 + response.quoteAuthor).appendTo('ul#responses');
             */
             
-            if (response.quoteText !== undefined) {            
+            //if (response.quoteText !== undefined) {            
               var tweeter = '<div id=\"share\">\
                 <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
               tweeter = tweeter + response.quoteText; 
@@ -96,7 +96,7 @@ $(function() {
 
               //console.log (responseHTML);
               $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
-            }
+            //}
             
           });
           // $("#responses").html(data);  
