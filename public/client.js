@@ -23,7 +23,7 @@ function isJsonString(str) {
 }
 
 function addQuoteToDisplay (response) {
-  console.log (response.quoteText);
+  //console.log (response.quoteText);
   //if (response.quoteText !== undefined) {            
     var tweeter = '<div id=\"share\">\
       <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
@@ -78,14 +78,19 @@ $(function() {
     // Step 1 - prepare the knowledge URL to send query 
     // Step 2 - get the Question for which we want to find answers
     var fullRoute = "/responses?"; 
-
+    //var params = {"query": "457653"};
+    var randomSeed = $("#query").val() !== "" ? $("#query").val() : $("#query").attr("placeholder");
+    console.log("**** randomSeed ", randomSeed);
+    var args = {"query": randomSeed};
+    console.log("***** Params: ", args);
+    fullRoute += $.param(args);
     // prepare the POST request to the server
-    $.post(fullRoute, function funcInvokedAfterPOST(postInfo) {
+    $.post(fullRoute,function funcInvokedAfterPOST(postInfo){
       // this is the callback function which gets
       // called after the server is done serving the request
       // Before we can "refresh" to get the results,
       // we invoke a setTimeOut with a callback function
-      console.log ("Back from Server call: " + postInfo);
+      //console.log ("Back from Server call: " + postInfo);
       window.setTimeout(function afterTimeOut(){
         // reloads and displays answer + previous answers
         // there must be a more efficient way of doing this

@@ -30,16 +30,17 @@ app.get("/responses", function (request, response) {
 app.post("/responses", function (request, response) {
   //dreams.push(request.query.dream);
   //console.log (response); 
-  // console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
-
+  //console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
+  //console.log(" POST:::", request); //.query.question + " // " + request.query.kid); 
+  
   getAnswer(request.query, function funcToInvokeAfterUnirestPOST(resp) {
     // console.log (resp.request); 
     console.log("PATH:: " + resp.request.path); 
-    console.log("resp.body: " + resp.body);
+    console.log("resp.body: ", resp.body);
     var responseQA = resp.body;
     
     quoteList.unshift(responseQA);
-    console.log(quoteList);
+    //console.log(quoteList);
     // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);
     //response.send(resp.request.path + " :("+ resp.body.score +")" + resp.body.answer);
     // response.send ("junk");
@@ -59,9 +60,9 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
   
   var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
   // STEP 2
-  //console.log("****** Query", query.question);
+  console.log("****** Query", query);
   //var payload = {"key": query.question, "lang": "en"};
-  var payload = {"key": "457653", "lang": "en"};
+  var payload = {"key": query, "lang": "en"};
   //payload = {}; 
 
   // STEP 3
