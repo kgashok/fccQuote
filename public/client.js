@@ -23,6 +23,7 @@ function isJsonString(str) {
 }
 
 function addQuoteToDisplay (response) {
+  console.log (response.quoteText);
   //if (response.quoteText !== undefined) {            
     var tweeter = '<div id=\"share\">\
       <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
@@ -91,17 +92,14 @@ $(function() {
         // location = location;
         //location.reload(true);
         $.get("/responses", function (responses) {
+          // this is very expensive...
+          // why not pick the last added quote and display that alone? 
+          //
           $("ul#responses").empty();
           responses.forEach(function(response) {
-            console.log (response.quoteText);
-            //console.log (response); 
-            /*$('<li></li>').text(response.quoteText 
-                                + "-" 
-                                + response.quoteAuthor).appendTo('ul#responses');
-            */
             addQuoteToDisplay(response);
           });
-          // $("#responses").html(data);  
+          // $("#responses").html(data);
         });
         $("#quoteButton").focus();
       },1500);  // some arbitrary value - may not be sufficient
