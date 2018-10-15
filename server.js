@@ -57,11 +57,8 @@ app.post("/responses", function (request, response) {
  */
 function getAnswer (query, funcToInvokeAfterUnirestPOST) {
   
-  var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en";
-  // builder = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=html&lang=en";
+  var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
   // STEP 2
-  //var payload = "{\"question\":\"Why bother with hashing?\"}";
-  //var payload = {"question": "What is hashing?"};
   //console.log("****** Query", query.question);
   //var payload = {"key": query.question, "lang": "en"};
   var payload = {"key": "457653", "lang": "en"};
