@@ -25,17 +25,21 @@ app.get("/responses", function (request, response) {
   response.send(quoteList);
 });
 
+
 // could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
 app.post("/responses", function (request, response) {
   //dreams.push(request.query.dream);
   //console.log (response); 
-  console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
+  // console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
 
   getAnswer(request.query, function funcToInvokeAfterUnirestPOST(resp) {
     // console.log (resp.request); 
     console.log("PATH:: " + resp.request.path); 
     console.log("resp.body: " + resp.body);
     var responseQA = resp.body;
+    //if (isJsonString(responseQA) === false) 
+    //  responseQA = JSON.parse(responseQA); 
+    
     quoteList.unshift(responseQA);
     console.log(quoteList);
     // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);

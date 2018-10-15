@@ -23,7 +23,8 @@
 	"keywords": [
 		"node",
 		"hyperdev",
-		"express"
+		"express", 
+    "unirest"
 	],
 	"license": "MIT"
 }

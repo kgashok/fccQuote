@@ -7,6 +7,19 @@
 function clearTheBox () { 
   console.log ("inside clear the box!");
   $("ul#responses").empty(); 
+  // but does not clear the actual quote list...
+  // So, it is not a deep clean! 
+}
+
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    console.log("bad JSON string" + str);
+    return false;
+  }
+  console.log("good JSON string" + str); 
+  return true;
 }
 
 $(function() {
@@ -49,22 +62,22 @@ $(function() {
       // Before we can "refresh" to get the results,
       // we invoke a setTimeOut with a callback function
       console.log ("Back from Server call: " + postInfo);
-      if (postInfo !== "undefined") {
-
-        window.setTimeout(function afterTimeOut(){
-          // reloads and displays answer + previous answers
-          // there must be a more efficient way of doing this
-          // location = location;
-          //location.reload(true);
-          $.get("/responses", function (responses) {
-            $("ul#responses").empty();
-            responses.forEach(function(response) {
-              //console.log (response.quoteText);
-              //console.log (response); 
-              /*$('<li></li>').text(response.quoteText 
-                                  + "-" 
-                                  + response.quoteAuthor).appendTo('ul#responses');
-              */
+      window.setTimeout(function afterTimeOut(){
+        // reloads and displays answer + previous answers
+        // there must be a more efficient way of doing this
+        // location = location;
+        //location.reload(true);
+        $.get("/responses", function (responses) {
+          $("ul#responses").empty();
+          responses.forEach(function(response) {
+            console.log (response.quoteText);
+            //console.log (response); 
+            /*$('<li></li>').text(response.quoteText 
+                                + "-" 
+                                + response.quoteAuthor).appendTo('ul#responses');
+            */
+            
+            if (response.quoteText !== undefined) {            
               var tweeter = '<div id=\"share\">\
                 <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
               tweeter = tweeter + response.quoteText; 
@@ -83,14 +96,14 @@ $(function() {
 
               //console.log (responseHTML);
               $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
-
-            });
-            // $("#responses").html(data);  
+            }
+            
           });
-          $("#quoteButton").focus();
-        },1500);  // some arbitrary value - may not be sufficient
-        console.log ("*** Reaching end of POST call");    
-      }
+          // $("#responses").html(data);  
+        });
+        $("#quoteButton").focus();
+      },1500);  // some arbitrary value - may not be sufficient
+      console.log ("*** Reaching end of POST call");
     }); // end of post call
     console.log ("*** Reaching end of Submit call");
 
