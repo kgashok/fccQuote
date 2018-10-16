@@ -9,3 +9,11 @@
 http://forismatic.com/en/api/ 
   - I first used the output in the HTML version 
   - And then switched to the JSON version to make it more versatile 
+  
+  
+## Updates on Express framework
+  - http://j.mp/postExpress 
+  
+## Using Unirest 
+  - http://unirest.io/nodejs.html
+  
