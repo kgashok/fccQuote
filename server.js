@@ -6,6 +6,8 @@ var express = require('express');
 var app = express();
 
 var rest = require('unirest');
+//var $ = require('jquery'); 
+                
 /*require(['unirest'], function (unirest) {
     //foo is now loaded.
 });*/
@@ -35,10 +37,16 @@ app.post("/responses", function (request, response) {
   
   getAnswer(request.query, function funcToInvokeAfterUnirestPOST(resp) {
     // console.log (resp.request); 
-    console.log("PATH:: " + resp.request.path); 
+    //console.log("PATH:: " + resp.request.path); 
     console.log("resp.body: ", resp.body);
     var responseQA = resp.body;
     
+    if (typeof responseQA === "string" || responseQA instanceof String) {
+      console.log("**** received string instead of Object!"); 
+      responseQA = responseQA.replace('\u005c','\u005c\u005c');
+      responseQA = JSON.parse(responseQA);
+    }
+      
     quoteList.unshift(responseQA);
     //console.log(quoteList);
     // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);
@@ -46,8 +54,8 @@ app.post("/responses", function (request, response) {
     // response.send ("junk");
   
   });
-  //response.sendStatus(200);
-  response.send(quoteList[quoteList.length-1]);
+  response.sendStatus(200);
+  //response.send(quoteList[quoteList.length-1]);
 });
 
 
@@ -67,7 +75,7 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
 
   // STEP 3
 
-  rest.get(quoteApi)
+  rest.post(quoteApi)
     .type('json')
     .send(payload)
     .end(function funcToInvokeAfterQandA (responseFromQandA) {  
@@ -76,6 +84,17 @@ function getAnswer (query, funcToInvokeAfterUnirestPOST) {
       else  // otherwise send the response to the console 
         console.log(responseFromQandA.body);
     });
+}
+
+function isJsonObject(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    console.log("bad JSON string" + str);
+    return false;
+  }
+  console.log("good JSON string" + str); 
+  return true;
 }
 
 

@@ -11,19 +11,10 @@ function clearTheBox () {
   // So, it is not a deep clean! 
 }
 
-function isJsonString(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    console.log("bad JSON string" + str);
-    return false;
-  }
-  console.log("good JSON string" + str); 
-  return true;
-}
+
 
 function addQuoteToDisplay (response) {
-  //console.log (response.quoteText);
+    // console.log (response.quoteText);
   //if (response.quoteText !== undefined) {            
     var tweeter = '<div id=\"share\">\
       <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
@@ -100,6 +91,7 @@ $(function() {
           // this is very expensive...
           // why not pick the last added quote and display that alone? 
           //
+          console.log(responses);
           $("ul#responses").empty();
           responses.forEach(function(response) {
             addQuoteToDisplay(response);

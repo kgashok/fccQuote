@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "express": "^4.16.4",
-    "unirest": "^0.5.1"
+    "unirest": "^0.5.1", 
+    "jquery": "^2.2.4"
   },
   "engines": {
     "node": "8.0.0"
@@ -24,7 +25,8 @@
     "node",
     "hyperdev",
     "express",
-    "unirest"
+    "unirest", 
+    "jquery"
   ],
   "license": "MIT"
 }
