@@ -32,7 +32,7 @@ app.post("/responses", function (request, response) {
   //console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
   //console.log(" POST:::", request); //.query.question + " // " + request.query.kid); 
   
-  getQuote(request.query.rnumber, function funcToInvokeAfterUnirestPOST(resp) {
+  getQuote(request.query, function funcToInvokeAfterUnirestPOST(resp) {
     //console.log (resp.request); 
     //console.log("PATH:: " + resp.request.path); 
     //console.log("resp.body: ", resp.body);
@@ -66,17 +66,15 @@ app.post("/responses", function (request, response) {
  * STEP 2 : Build the query with a random number 
  * STEP 3 : Make the Unirest POST call
  */
-function getQuote (rnumber, funcToInvokeAfterUnirestPOST) {
-  
+function getQuote (query, funcToInvokeAfterUnirestPOST) {
   var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
+
   // STEP 2
-  console.log("****** rNumber", rnumber);
+  console.log("****** rnumber", query.rnumber);
   //var payload = {"key": query.question, "lang": "en"};
-  var payload = {"key": rnumber, "lang": "en"};
-  //payload = {}; 
+  var payload = {"key": query.rnumber, "lang": "en"};
 
   // STEP 3
-
   rest.post(quoteApi)
     .type('json')
     .send(payload)
