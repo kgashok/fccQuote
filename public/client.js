@@ -4,39 +4,6 @@
 // by default, you've got jQuery,
 // add other scripts at the bottom of index.html
 
-function clearTheBox () { 
-  console.log ("inside clear the box!");
-  $("ul#responses").empty(); 
-  // but does not clear the actual quote list...
-  // So, it is not a deep clean! 
-}
-
-
-
-function addQuoteToDisplay (response) {
-    // console.log (response.quoteText);
-  //if (response.quoteText !== undefined) {            
-    var tweeter = '<div id=\"share\">\
-      <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
-    tweeter = tweeter + response.quoteText; 
-    tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
-    var responseHTML = tweeter + '\
-      <blockquote class="quote">\
-        <strong><cite>\
-          <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
-            '+response.quoteText+'</a>\
-        </cite></strong><br/>\
-        <small>\
-          <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
-            '+response.quoteAuthor+'</a>\
-        </small>\
-      </blockquote>';
-
-    //console.log (responseHTML);
-    $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
-  //}
-}
-
 $(function() {
   // This is invoked to refresh previously received
   // quotations, if any 
@@ -46,8 +13,7 @@ $(function() {
       responses.forEach(function(response) {
         //$('<li></li>').text(response).appendTo('ul#responses');
         addQuoteToDisplay(response);
-      });
-      
+      });      
     }
     /*
      * this is not required for now...
@@ -69,10 +35,10 @@ $(function() {
     // Step 1 - prepare the knowledge URL to send query 
     // Step 2 - get the Question for which we want to find answers
     var fullRoute = "/responses?"; 
-    //var params = {"query": "457653"};
-    var randomSeed = $("#query").val() !== "" ? $("#query").val() : $("#query").attr("placeholder");
+    //var params = {"uNumber": "457653"};
+    var randomSeed = $("#uNumber").val() !== "" ? $("#uNumber").val() : $("#uNumber").attr("placeholder");
     console.log("**** randomSeed ", randomSeed);
-    var args = {"query": randomSeed};
+    var args = {"rnumber": randomSeed};
     console.log("***** Params: ", args);
     fullRoute += $.param(args);
     // prepare the POST request to the server
@@ -107,3 +73,36 @@ $(function() {
   }); // end of submit call
 
 });
+
+function clearTheBox () { 
+  console.log ("inside clear the box!");
+  $("ul#responses").empty(); 
+  // but does not clear the actual quote list...
+  // So, it is not a deep clean! 
+}
+
+
+function addQuoteToDisplay (response) {
+    // console.log (response.quoteText);
+  //if (response.quoteText !== undefined) {            
+    var tweeter = '<div id=\"share\">\
+      <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
+    tweeter = tweeter + response.quoteText; 
+    tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
+    var responseHTML = tweeter + '\
+      <blockquote class="quote">\
+        <strong><cite>\
+          <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
+            '+response.quoteText+'</a>\
+        </cite></strong><br/>\
+        <small>\
+          <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
+            '+response.quoteAuthor+'</a>\
+        </small>\
+      </blockquote>';
+
+    //console.log (responseHTML);
+    $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
+  //}
+}
+

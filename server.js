@@ -8,10 +8,6 @@ var app = express();
 var rest = require('unirest');
 //var $ = require('jquery'); 
                 
-/*require(['unirest'], function (unirest) {
-    //foo is now loaded.
-});*/
-
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
@@ -30,21 +26,27 @@ app.get("/responses", function (request, response) {
 
 // could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
 app.post("/responses", function (request, response) {
+  //console.log(request);
   //dreams.push(request.query.dream);
   //console.log (response); 
   //console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
   //console.log(" POST:::", request); //.query.question + " // " + request.query.kid); 
   
-  getAnswer(request.query, function funcToInvokeAfterUnirestPOST(resp) {
-    // console.log (resp.request); 
+  getQuote(request.query.rnumber, function funcToInvokeAfterUnirestPOST(resp) {
+    //console.log (resp.request); 
     //console.log("PATH:: " + resp.request.path); 
-    console.log("resp.body: ", resp.body);
+    //console.log("resp.body: ", resp.body);
     var responseQA = resp.body;
     
     if (typeof responseQA === "string" || responseQA instanceof String) {
       console.log("**** received string instead of Object!"); 
-      responseQA = responseQA.replace('\u005c','\u005c\u005c');
-      responseQA = JSON.parse(responseQA);
+      //responseQA = responseQA.replace('/u005c','\u005c\u005c');
+      responseQA = responseQA.replace(/\\'/g, "'");
+      try {
+        responseQA = JSON.parse(responseQA);
+      } catch (e) { 
+        console.log("Bad JSON string", responseQA);
+      }
     }
       
     quoteList.unshift(responseQA);
@@ -64,13 +66,13 @@ app.post("/responses", function (request, response) {
  * STEP 2 : Build the query with a random number 
  * STEP 3 : Make the Unirest POST call
  */
-function getAnswer (query, funcToInvokeAfterUnirestPOST) {
+function getQuote (rnumber, funcToInvokeAfterUnirestPOST) {
   
   var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
   // STEP 2
-  console.log("****** Query", query);
+  console.log("****** rNumber", rnumber);
   //var payload = {"key": query.question, "lang": "en"};
-  var payload = {"key": query, "lang": "en"};
+  var payload = {"key": rnumber, "lang": "en"};
   //payload = {}; 
 
   // STEP 3
