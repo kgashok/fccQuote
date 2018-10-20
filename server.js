@@ -14,6 +14,18 @@ var rest = require('unirest');
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
+app.use("/generate", function(req, res, next) {
+  //console.log(req);
+  var rnumber = req.query.rnumber;
+  if (rnumber === undefined) { 
+    console.log("Random seed not defined!", rnumber);
+    res.sendStatus(500);
+  }
+  else 
+    next();
+});
+
+
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
@@ -25,13 +37,13 @@ app.get("/responses", function (request, response) {
 
 
 // could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.post("/responses", function (request, response) {
+app.post("/generate", function (request, response) {
   //console.log(request);
   //dreams.push(request.query.dream);
   //console.log (response); 
   //console.log(" POST:::" + request.query.question + " // " + request.query.kid); 
   //console.log(" POST:::", request); //.query.question + " // " + request.query.kid); 
-  
+  console.log("inside app post"); 
   getQuote(request.query, function funcToInvokeAfterUnirestPOST(resp) {
     //console.log (resp.request); 
     //console.log("PATH:: " + resp.request.path); 

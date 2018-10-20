@@ -34,7 +34,7 @@ $(function() {
     // the POST call 
     // Step 1 - prepare the knowledge URL to send query 
     // Step 2 - get the Question for which we want to find answers
-    var fullRoute = "/responses?"; 
+    var fullRoute = "/generate?"; 
     //var params = {"uNumber": "457653"};
     var randomSeed = $("#uNumber").val() !== "" ? $("#uNumber").val() : $("#uNumber").attr("placeholder");
     console.log("**** randomSeed ", randomSeed);
@@ -47,7 +47,7 @@ $(function() {
       // called after the server is done serving the request
       // Before we can "refresh" to get the results,
       // we invoke a setTimeOut with a callback function
-      //console.log ("Back from Server call: " + postInfo);
+      console.log ("Back from Server call: ", postInfo);
       window.setTimeout(function afterTimeOut(){
         // reloads and displays answer + previous answers
         // there must be a more efficient way of doing this
@@ -67,9 +67,13 @@ $(function() {
         $("#quoteButton").focus();
       },1500);  // some arbitrary value - may not be sufficient
       console.log ("*** Reaching end of POST call");
-    }); // end of post call
+    }) // end of post call
+    .fail(function(response){
+      // https://stackoverflow.com/a/11820453/307454
+      console.log("***Server returns error", response.status, "No random seed sent?");
+    });
+    
     console.log ("*** Reaching end of Submit call");
-
   }); // end of submit call
 
 });
