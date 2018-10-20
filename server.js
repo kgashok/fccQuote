@@ -17,9 +17,11 @@ app.use(express.static('public'));
 app.use("/generate", function(req, res, next) {
   //console.log(req);
   var rnumber = req.query.rnumber;
-  if (rnumber === undefined) { 
-    console.log("Random seed not defined!", rnumber);
-    res.sendStatus(500);
+  if (rnumber === undefined || rnumber > 999999) { 
+    console.log("Bad random seed!", rnumber);
+    //https://stackoverflow.com/a/38158081/307454
+    //res.sendStatus(500);
+    res.status(500).send("Bad random seed: " + rnumber);
   }
   else 
     next();

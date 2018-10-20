@@ -70,7 +70,8 @@ $(function() {
     }) // end of post call
     .fail(function(response){
       // https://stackoverflow.com/a/11820453/307454
-      console.log("***Server returns error", response.status, "No random seed sent?");
+      console.log(response);
+      console.log("***Server returns error", response.status, response.responseText);
     });
     
     console.log ("*** Reaching end of Submit call");
