@@ -70,7 +70,7 @@ $(function() {
     }) // end of post call
     .fail(function(response){
       // https://stackoverflow.com/a/11820453/307454
-      console.log(response);
+      // console.log(response);
       console.log("***Server returns error", response.status, response.responseText);
     });
     
