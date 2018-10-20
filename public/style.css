@@ -22,6 +22,7 @@ url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoes.jpg);
 */
 header { 
   background-color: wheat;
+  font-size: .75rem;
 }
 footer {
   /*background-color: darkorange; */
@@ -90,6 +91,7 @@ li { background: white; }
 li:nth-child(odd) { background: silver; }
 h1 {
   font-weight: bold;
+  font-size: 1.2em;
   color: darkorange;
 }
 .bold {
