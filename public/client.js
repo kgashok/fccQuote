@@ -17,8 +17,10 @@ $(function() {
 
   // function that is invoked when the "Get Quote" button 
   // is pressed
-  $('form').submit(function(event) {
+  $('form').submit(async function(event) {
     console.log ("Inside submit");
+    // what is this preventDefault? 
+    // what does this? 
     event.preventDefault();
     
     // We need to figure out two arguments to make 
@@ -35,7 +37,7 @@ $(function() {
     fullRoute += $.param(args);
     
     // STEP 2 - prepare the POST request to the server
-    $.post(fullRoute,function funcInvokedAfterPOST(postInfo){
+    /*$.get(fullRoute,function funcInvokedAfterPOST(postInfo){
       // this is the callback function which gets
       // called after the server is done serving the request
       // Before we can "refresh" to get the results,
@@ -53,11 +55,51 @@ $(function() {
       console.log ("*** Reaching end of POST call");
     }) // end of post call
     .fail(response => reportError(response));
-  
+    */
+    loadJson(fullRoute, args)
+      .then(response => console.log(response))
+      .then(await sleep(1500)); 
+
+    loadJson("/responses")
+      .then(responses => responses.json())
+      .then(quotes => {
+        $("ul#responses").empty();
+        displayAllQuotes(quotes);
+      })
+      .then($("#quoteButton").focus());
     console.log ("*** Reaching end of Submit call");
   }); // end of submit call
 
 });
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+    .then(console.log("Sleep done!" ));
+}
+
+function loadJson(url, data = {}) { // (2)
+  //return fetch("https://mindless-flute.glitch.me"+url).then(response => {
+  return fetch("https://mindless-flute.glitch.me"+url).then(response => {
+      if (response.status == 200) {
+        //return response.json();
+        return response;
+      } else {
+        // what is thrown here has to be captured
+        // and made part of errorIDs? 
+        console.log("loadJson: throwing error"); 
+        throw new HttpError(response);
+      }
+    })
+}
+
+class HttpError extends Error { // (1)
+  constructor(response) {
+    super(`${response.status} for ${response.url}`);
+    this.name = 'HttpError';
+    this.response = response;
+  }
+}
+
 
 function reportError(response) { 
     // https://stackoverflow.com/a/11820453/307454

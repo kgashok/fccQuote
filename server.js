@@ -39,7 +39,7 @@ app.get("/responses", function (request, response) {
 
 
 // could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.post("/generate", function (request, response) {
+app.get("/generate", function (request, response) {
   //console.log(request);
   //dreams.push(request.query.dream);
   //console.log (response); 
