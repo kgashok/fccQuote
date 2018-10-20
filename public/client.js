@@ -92,7 +92,9 @@ function loadJson(url, data = {}) { // (2)
       } else {
         // what is thrown here has to be captured
         // and made part of errorIDs? 
-        console.log("loadJson: throwing error"); 
+        //console.log("loadJson: throwing error"); 
+        alert("loadJson: throwing error"); 
+        $("#quoteButton").removeAttr("disabled");
         throw new HttpError(response);
       }
     })
