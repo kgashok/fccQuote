@@ -58,6 +58,7 @@ $(function() {
     */
     loadJson(fullRoute, args)
       .then(response => console.log(response))
+      .then(console.log("*** Reaching end of POST call"))
       .then(await sleep(1500)); 
 
     loadJson("/responses")
@@ -66,8 +67,8 @@ $(function() {
         $("ul#responses").empty();
         displayAllQuotes(quotes);
       })
-      .then($("#quoteButton").focus());
-    console.log ("*** Reaching end of Submit call");
+      .then($("#quoteButton").focus())
+      .then(console.log ("*** Reaching end of Submit call"));
   }); // end of submit call
 
 });

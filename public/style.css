@@ -99,12 +99,12 @@ p {
   max-width: 600px;
 }
 form {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   padding: 15px;
   background-color: cyan;
   display: inline-block;
   width: 100%;
-  max-width: 340px;
+  max-width: 140px;
   border-radius: 3px;
 }
 input {
@@ -130,6 +130,7 @@ button:hover {
 button:active {
   box-shadow: none;
 }
-li {
-  margin-bottom: 5px;
+il {
+  /*margin-bottom: 2px;*/
+  font-size: small;
 }
