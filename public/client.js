@@ -10,17 +10,8 @@ $(function() {
   $.get('/responses', function funcInvokedAfterGET(responses) {
     console.log("**** Inside get() call ");
     if ($('ul#responses').children().length == 0){
-      responses.forEach(function(response) {
-        //$('<li></li>').text(response).appendTo('ul#responses');
-        addQuoteToDisplay(response);
-      });      
+      displayAllQuotes(responses);
     }
-    /*
-     * this is not required for now...
-    else {
-       $('<li></li>').text(responses[0]).appendTo('ul#responses');
-    }
-    */
   });
 
 
@@ -32,8 +23,9 @@ $(function() {
     
     // We need to figure out two arguments to make 
     // the POST call 
-    // Step 1 - prepare the knowledge URL to send query 
-    // Step 2 - get the Question for which we want to find answers
+    // Step 1 - prepare the random number to send as query 
+    // Step 2 - get the Quote from the forismatic API
+    
     var fullRoute = "/generate?"; 
     //var params = {"uNumber": "457653"};
     var randomSeed = $("#uNumber").val() !== "" ? $("#uNumber").val() : $("#uNumber").attr("placeholder");
@@ -41,7 +33,8 @@ $(function() {
     var args = {"rnumber": randomSeed};
     console.log("***** Params: ", args);
     fullRoute += $.param(args);
-    // prepare the POST request to the server
+    
+    // STEP 2 - prepare the POST request to the server
     $.post(fullRoute,function funcInvokedAfterPOST(postInfo){
       // this is the callback function which gets
       // called after the server is done serving the request
@@ -49,35 +42,28 @@ $(function() {
       // we invoke a setTimeOut with a callback function
       console.log ("Back from Server call: ", postInfo);
       window.setTimeout(function afterTimeOut(){
-        // reloads and displays answer + previous answers
-        // there must be a more efficient way of doing this
-        // location = location;
-        //location.reload(true);
         $.get("/responses", function (responses) {
           // this is very expensive...
           // why not pick the last added quote and display that alone? 
-          //
-          console.log(responses);
           $("ul#responses").empty();
-          responses.forEach(function(response) {
-            addQuoteToDisplay(response);
-          });
-          // $("#responses").html(data);
+          displayAllQuotes(responses);
         });
         $("#quoteButton").focus();
       },1500);  // some arbitrary value - may not be sufficient
       console.log ("*** Reaching end of POST call");
     }) // end of post call
-    .fail(function(response){
-      // https://stackoverflow.com/a/11820453/307454
-      // console.log(response);
-      console.log("***Server returns error", response.status, response.responseText);
-    });
-    
+    .fail(response => reportError(response));
+  
     console.log ("*** Reaching end of Submit call");
   }); // end of submit call
 
 });
+
+function reportError(response) { 
+    // https://stackoverflow.com/a/11820453/307454
+    // console.log(response);
+    console.log("***Server returns error", response.status, response.responseText);
+}
 
 function clearTheBox () { 
   console.log ("inside clear the box!");
@@ -86,6 +72,15 @@ function clearTheBox () {
   // So, it is not a deep clean! 
 }
 
+
+function displayAllQuotes (quotes) { 
+  console.log(quotes);
+  quotes.forEach(function(quote) {
+    //$('<li></li>').text(response).appendTo('ul#responses');
+    addQuoteToDisplay(quote);
+  });
+  // $("#responses").html(data);
+}
 
 function addQuoteToDisplay (response) {
     // console.log (response.quoteText);
