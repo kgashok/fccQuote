@@ -71,9 +71,9 @@ $(function() {
         displayAllQuotes(quotes);
       });
 
-
-  $("#quoteButton").removeAttr("disabled").focus();
-  console.log ("*** Reaching end of Submit call");
+    $("#quoteButton").removeAttr("disabled");
+    $("#quoteButton").focus();
+    console.log ("*** Reaching end of Submit call");
   }); // end of submit call
 
 });
