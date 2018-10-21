@@ -93,8 +93,8 @@ function loadJson(url, data = {}) { // (2)
         // what is thrown here has to be captured
         // and made part of errorIDs? 
         //console.log("loadJson: throwing error"); 
-        alert("loadJson: throwing error"); 
         $("#quoteButton").removeAttr("disabled");
+        alert("loadJson: throwing error"); 
         throw new HttpError(response);
       }
     })
@@ -138,6 +138,7 @@ function addQuoteToDisplay (response) {
     var tweeter = '<div id=\"share\">\
       <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
     tweeter = tweeter + response.quoteText; 
+    tweeter = tweeter + '- ' + response.quoteAuthor;
     tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
     var responseHTML = tweeter + '\
       <blockquote class="quote">\
