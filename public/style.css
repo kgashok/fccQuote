@@ -75,6 +75,7 @@ a#quote {
 }
 .quote { 
   font-size: 20px; 
+  background-color: lightcyan;
 }
 body {
   background-color: beige;
