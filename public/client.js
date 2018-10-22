@@ -155,7 +155,7 @@ function addQuoteToDisplay (response) {
       </blockquote>';
 
     //console.log (responseHTML);
-    $('<ul></ul>').html(responseHTML).appendTo('#responses');
+    $('<ul></ul>').html(responseHTML).appendTo('#quoteStream');
   //}
 }
 

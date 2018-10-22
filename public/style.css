@@ -78,8 +78,8 @@ a#quote {
   background-color: ivory;
 }
 
-#responses ul:first-child .quote {
-  font-size: 36px;
+#quoteStream ul:first-child .quote {
+  font-size: 32px;
   background-color: honeydew;
 }
 
