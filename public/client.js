@@ -142,6 +142,8 @@ function addQuoteToDisplay (response) {
     tweeter = tweeter + response.quoteText; 
     tweeter = tweeter + '- ' + response.quoteAuthor;
     tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
+    
+  
     var responseHTML = tweeter + '\
       <blockquote class="quote">\
         <strong><cite>\

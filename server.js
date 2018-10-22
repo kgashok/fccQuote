@@ -19,6 +19,8 @@ db.defaults({ quotes: [
     ]
   }).write();
 
+//var redis = require("redis-node");
+//var redisClient = redis.createClient();
 
 var rest = require('unirest');
 //var $ = require('jquery'); 

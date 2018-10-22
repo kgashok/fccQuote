@@ -43,7 +43,7 @@ div#share>a, a.noscr{
   background:url(https://cdn.gomix.com/bf1bd29b-8d14-43b2-86cb-cb2a443cab08%2FtwitterIcons.png) no-repeat;
   width:20px;
   height:20px;
-  margin-top:20px;
+  margin-top:10px;
   outline:none
 }
 a#t {
@@ -54,7 +54,7 @@ a#t:hover {
 }
 a#vk {
   background-position:1px -41px !important;
-  margin:16px 6px 0 0
+  margin:6px 6px 0 0
 }
 a#vk:hover {
   background-position:1px -61px !important
@@ -83,7 +83,7 @@ a#quote {
 #quotestream ul:first-child .quote {
   font-size: 32px;
   background-color: ghostwhite;
-  border: 2px solid lightcyan;
+  border: 2px solid olive;
 }
 
 #quotestream ul:first-child .quote:hover {
@@ -99,7 +99,7 @@ body {
 }
 body {
   font-family: helvetica, arial, sans-serif;
-  margin: 25px;
+  margin: 15px;
 }
 li { background: white; }
 li:nth-child(odd) { background: silver; }
@@ -151,3 +151,10 @@ il {
   font-size: small;
 }
 
+ul { 
+  padding: 2px;
+}
+
+blockquote { 
+  margin: 16px;
+}
