@@ -129,7 +129,9 @@ function displayAllQuotes (quotes) {
     //$('<li></li>').text(response).appendTo('ul#responses');
     addQuoteToDisplay(quote);
   });
+  //$("#responses").selector("first-child");
   // $("#responses").html(data);
+  
 }
 
 function addQuoteToDisplay (response) {
@@ -153,7 +155,7 @@ function addQuoteToDisplay (response) {
       </blockquote>';
 
     //console.log (responseHTML);
-    $('<ul></ul>').html(responseHTML).appendTo('ul#responses');
+    $('<ul></ul>').html(responseHTML).appendTo('#responses');
   //}
 }
 

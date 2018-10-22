@@ -74,9 +74,14 @@ a#quote {
   text-decoration: none; /* no underline */
 }
 .quote { 
-  font-size: 18  px; 
+  font-size: 18px; 
   background-color: ivory;
 }
+
+#responses ul:first-child .quote {
+  background-color: honeydew;
+}
+
 body {
   background-color: beige;
   /*background-image: url("http://blog-imgs-92.fc2.com/s/l/o/slorakusyou/hate.jpg");*/
@@ -137,3 +142,4 @@ il {
   /*margin-bottom: 2px;*/
   font-size: small;
 }
+
