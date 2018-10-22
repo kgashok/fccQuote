@@ -5,8 +5,20 @@
 var express = require('express');
 var app = express();
 
-var redis = require("redis");
-//var redisClient = redis.createClient();
+// setup a new database
+// persisted using async file storage
+// Security note: the database is saved to the file `db.json` on the local filesystem.
+// It's deliberately placed in the `.data` directory which doesn't get copied if someone remixes the project.
+var low = require('lowdb');
+var FileSync = require('lowdb/adapters/FileSync');
+var adapter = new FileSync('.data/db.json');
+var db = low(adapter);
+
+// default quote list
+db.defaults({ quotes: [
+    ]
+  }).write();
+
 
 var rest = require('unirest');
 //var $ = require('jquery'); 
@@ -37,7 +49,12 @@ app.get("/", function (request, response) {
 });
 
 app.get("/responses", function (request, response) {
-  response.send(quoteList);
+  var dbQuoteList=[];
+  var quotes = db.get('quotes').value();
+  quotes.forEach(quote=> dbQuoteList.unshift(quote));
+  
+  response.send(dbQuoteList);
+  //response.send(quoteList);
 });
 
 
@@ -60,20 +77,25 @@ app.get("/generate", function (request, response) {
       //responseQA = responseQA.replace('/u005c','\u005c\u005c');
       responseQA = responseQA.replace(/\\'/g, "'");
       try {
-        responseQA = JSON.parse(responseQA);
+        responseQA = JSON.parse(responseQA);  
+
       } catch (e) { 
         console.log("Bad JSON string", responseQA);
         // need to return with a response
         // otherwise, a "undefined" will show up
       }
     }
-      
+          
+    db.get('quotes')
+      .push(responseQA)
+      .write();
+  
+    console.log("New quote inserted in the database");  
     quoteList.unshift(responseQA);
     //console.log(quoteList);
     // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);
     //response.send(resp.request.path + " :("+ resp.body.score +")" + resp.body.answer);
     // response.send ("junk");
-  
   });
   response.sendStatus(200);
   //response.send(quoteList[quoteList.length-1]);
