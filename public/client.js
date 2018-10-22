@@ -67,7 +67,7 @@ $(function() {
     await loadJson("/responses")
       .then(responses => responses.json())
       .then(quotes => {
-        $("ul#responses").empty(); // very expensive! 
+        $("ul#quotestream").empty(); // very expensive! 
         displayAllQuotes(quotes);
       });
 
@@ -117,7 +117,7 @@ function reportError(response) {
 
 function clearTheBox () { 
   console.log ("inside clear the box!");
-  $("ul#responses").empty(); 
+  $("ul#quotestream").empty(); 
   // but does not clear the actual quote list...
   // So, it is not a deep clean! 
 }
@@ -155,7 +155,7 @@ function addQuoteToDisplay (response) {
       </blockquote>';
 
     //console.log (responseHTML);
-    $('<ul></ul>').html(responseHTML).appendTo('#quoteStream');
+    $('<ul></ul>').html(responseHTML).appendTo('ul#quotestream');
   //}
 }
 
