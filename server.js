@@ -5,9 +5,12 @@
 var express = require('express');
 var app = express();
 
+var redis = require("redis");
+//var redisClient = redis.createClient();
+
 var rest = require('unirest');
 //var $ = require('jquery'); 
-                
+          
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
@@ -60,6 +63,8 @@ app.get("/generate", function (request, response) {
         responseQA = JSON.parse(responseQA);
       } catch (e) { 
         console.log("Bad JSON string", responseQA);
+        // need to return with a response
+        // otherwise, a "undefined" will show up
       }
     }
       

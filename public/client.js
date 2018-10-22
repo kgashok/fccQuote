@@ -59,7 +59,7 @@ $(function() {
     .fail(response => reportError(response));
     */
     await loadJson(fullRoute, args)
-      .then(response => console.log(response))
+      //.then(response => console.log(response))
       .then(console.log("*** Reaching end of POST call"));
     
     await sleep(1500);
@@ -124,7 +124,7 @@ function clearTheBox () {
 
 
 function displayAllQuotes (quotes) { 
-  console.log(quotes);
+  //console.log(quotes);
   quotes.forEach(function(quote) {
     //$('<li></li>').text(response).appendTo('ul#responses');
     addQuoteToDisplay(quote);

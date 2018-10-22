@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "express": "^4.16.4",
-    "unirest": "^0.5.1"
+    "unirest": "^0.5.1",
+    "redis-cli": "^1.0.2",
+    "redis-server": "^1.2.2",
+    "redis": "^2.8.0"
   },
   "engines": {
     "node": "8.0.0"
