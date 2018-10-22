@@ -79,6 +79,7 @@ a#quote {
 }
 
 #responses ul:first-child .quote {
+  font-size: 36px;
   background-color: honeydew;
 }
 
