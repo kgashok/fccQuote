@@ -137,10 +137,10 @@ function addQuoteToDisplay (response) {
       
     var responseHTML = tweeter + '\
       <blockquote class="quote">\
-        <strong><cite>\
+        <strong>\
           <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
             '+response.quoteText+'</a>\
-        </cite></strong><br/>\
+        </strong><br/>\
         <small>\
           <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
             '+response.quoteAuthor+'</a>\
