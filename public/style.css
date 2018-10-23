@@ -83,11 +83,11 @@ a#quote {
 #quotestream ul:first-child .quote {
   font-size: 32px;
   background-color: ghostwhite;
-  border: 2px solid olive;
+  border: 3px solid olive;
 }
 
 #quotestream ul:first-child .quote:hover {
-  border: 2px solid aqua;
+  border: 5px solid lime;
 }
 
 body {
