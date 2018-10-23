@@ -94,12 +94,13 @@ body {
   background-color: beige;
   /*background-image: url("http://blog-imgs-92.fc2.com/s/l/o/slorakusyou/hate.jpg");*/
 }
+
 * {
   box-sizing: border-box;
 }
 body {
   font-family: helvetica, arial, sans-serif;
-  margin: 15px;
+  margin: 20px;
 }
 li { background: white; }
 li:nth-child(odd) { background: silver; }

@@ -1,11 +1,8 @@
 // client-side js
 // run by the browser each time your view template is loaded
 
-// by default, you've got jQuery,
-// add other scripts at the bottom of index.html
-
 $(function() {
-  // This is invoked to refresh previously received
+  // This is invoked to refresh previously generated
   // quotations, if any 
   $.get('/responses', function funcInvokedAfterGET(responses) {
     console.log("**** Inside get() call ");
@@ -90,9 +87,6 @@ function loadJson(url, data = {}) { // (2)
         //return response.json();
         return response;
       } else {
-        // what is thrown here has to be captured
-        // and made part of errorIDs? 
-        //console.log("loadJson: throwing error"); 
         $("#quoteButton").removeAttr("disabled");
         alert("loadJson: throwing error"); 
         throw new HttpError(response);
@@ -112,7 +106,8 @@ class HttpError extends Error { // (1)
 function reportError(response) { 
     // https://stackoverflow.com/a/11820453/307454
     // console.log(response);
-    console.log("***Server returns error", response.status, response.responseText);
+    console.log("***Server returns error", 
+                response.status, response.responseText);
 }
 
 function clearTheBox () { 
@@ -130,20 +125,16 @@ function displayAllQuotes (quotes) {
     addQuoteToDisplay(quote);
   });
   //$("#responses").selector("first-child");
-  // $("#responses").html(data);
-  
+  // $("#responses").html(data);  
 }
 
 function addQuoteToDisplay (response) {
-    // console.log (response.quoteText);
-  //if (response.quoteText !== undefined) {            
     var tweeter = '<div id=\"share\">\
       <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
     tweeter = tweeter + response.quoteText; 
     tweeter = tweeter + '- ' + response.quoteAuthor;
     tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
-    
-  
+      
     var responseHTML = tweeter + '\
       <blockquote class="quote">\
         <strong><cite>\
@@ -158,6 +149,5 @@ function addQuoteToDisplay (response) {
 
     //console.log (responseHTML);
     $('<ul></ul>').html(responseHTML).appendTo('ul#quotestream');
-  //}
 }
 
