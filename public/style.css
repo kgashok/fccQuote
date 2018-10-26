@@ -71,7 +71,7 @@ a#quote:hover {
 }
 a#quote {
   color: black;  
-  font-weight: bolder;
+  /*font-weight: bolder; */
   text-decoration: none; /* no underline */
 }
 .quote { 
@@ -79,6 +79,10 @@ a#quote {
   background-color: ivory;
   padding: 3px;
   font-style: italic;
+  /*font-family: Consolas, monaco, monospace;*/
+  /*font-family: "Arial Narrow", Arial, sans-serif;*/
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  /*font-family: Roboto; */
 }
 
 #quotestream ul:first-child .quote {
@@ -86,7 +90,6 @@ a#quote {
   background-color: ghostwhite;
   border: 3px dotted olive;
   font-style: normal;
-
 }
 
 #quotestream ul:first-child .quote:hover {
