@@ -130,17 +130,16 @@ function displayAllQuotes (quotes) {
 
 function addQuoteToDisplay (response) {
     var tweeter = '<div id=\"share\">\
-      <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/home?status=';
+      <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/intent/tweet?text=';
     tweeter = tweeter + response.quoteText; 
     tweeter = tweeter + '- ' + response.quoteAuthor;
     tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
       
     var responseHTML = tweeter + '\
       <blockquote class="quote">\
-        <strong>\
           <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
             '+response.quoteText+'</a>\
-        </strong><br/>\
+        <br/>\
         <small>\
           <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
             '+response.quoteAuthor+'</a>\
