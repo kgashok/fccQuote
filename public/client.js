@@ -81,8 +81,7 @@ async function sleep(ms) {
 }
 
 function loadJson(url, data = {}) { // (2)
-  //return fetch("https://mindless-flute.glitch.me"+url).then(response => {
-  return fetch("https://mindless-flute.glitch.me"+url).then(response => {
+  return fetch("https://complete-shelf.glitch.me"+url).then(response => {
       if (response.status == 200) {
         //return response.json();
         return response;
