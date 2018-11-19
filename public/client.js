@@ -57,7 +57,13 @@ $(function() {
     */
     await loadJson(fullRoute, args)
       //.then(response => console.log(response))
-      .then(console.log("*** Reaching end of POST call"));
+      .then(console.log("*** Reaching end of POST call"))
+      //.catch(console.log("Getting JSON data failed!"));
+      .catch(response => {
+          // Something other than an HTTP error has occurred
+          alert ("Error getting data! Please try with https:");
+          $("#quoteButton").removeAttr("disabled");
+      });
     
     await sleep(1500);
 
