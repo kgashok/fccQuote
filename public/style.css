@@ -1,4 +1,4 @@
-/* styles */
+  /* styles */
 /* called by your view template */
 /* You might want to try something fancier: */
 /* less: http://lesscss.org/ */
@@ -112,13 +112,11 @@ body {
 li { background: white; }
 li:nth-child(odd) { background: silver; }
 h1 {
-  font-weight: bold;
+  /*font-weight: bold; */
   font-size: 1.2em;
   color: darkorange;
 }
-.bold {
-  font-weight: bold;
-}
+
 p {
   max-width: 600px;
 }
