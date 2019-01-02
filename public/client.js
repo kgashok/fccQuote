@@ -57,13 +57,7 @@ $(function() {
     */
     await loadJson(fullRoute, args)
       //.then(response => console.log(response))
-      .then(console.log("*** Reaching end of POST call"))
-      //.catch(console.log("Getting JSON data failed!"));
-      .catch(_ => {
-          // Something other than an HTTP error has occurred
-          alert ("Error getting data! Please try with https:");
-          $("#quoteButton").removeAttr("disabled");
-      });
+      .then(console.log("*** Reaching end of POST call"));
     
     await sleep(1500);
 
@@ -87,7 +81,8 @@ async function sleep(ms) {
 }
 
 function loadJson(url, data = {}) { // (2)
-  return fetch("https://quotefcc.glitch.me"+url).then(response => {
+  //return fetch("https://mindless-flute.glitch.me"+url).then(response => {
+  return fetch("https://mindless-flute.glitch.me"+url).then(response => {
       if (response.status == 200) {
         //return response.json();
         return response;

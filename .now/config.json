@@ -1,0 +1,24 @@
+{
+  "_": "This is your Now config file. See `now config help`. More: https://goo.gl/5aRS2s",
+  "sh": {
+    "user": {
+      "uid": "bD2pimNEHL1v4mGueiN2DExG",
+      "email": "lifebalance@gmail.com",
+      "name": "Ashok Bakthavathsalam",
+      "username": "kgashok",
+      "date": "2018-10-24T16:58:27.034Z",
+      "avatar": "a3944f01e5821e9b2fdc1d6d4dc1fbbe33a99ae8",
+      "github": {
+        "email": "lifebalance@gmail.com",
+        "login": "kgashok",
+        "updatedAt": 1540416123676,
+        "installation": {
+          "id": "410909",
+          "login": "kgashok",
+          "loginType": "User"
+        }
+      },
+      "platformVersion": 1
+    }
+  }
+}
