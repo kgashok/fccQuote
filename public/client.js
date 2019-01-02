@@ -57,7 +57,17 @@ $(function() {
     */
     await loadJson(fullRoute, args)
       //.then(response => console.log(response))
-      .then(console.log("*** Reaching end of POST call"));
+      .then(console.log("*** Reaching end of POST call"))
+      //.catch(console.log("Getting JSON data failed!"));
+      .catch(response => {
+          // Something other than an HTTP error has occurred
+          if (response !== null) {
+            reportError(response); 
+          } else { 
+            alert ("Error getting data! Please try with https:");
+            $("#quoteButton").removeAttr("disabled");
+          }
+      });
     
     await sleep(1500);
 
@@ -81,17 +91,17 @@ async function sleep(ms) {
 }
 
 function loadJson(url, data = {}) { // (2)
-  //return fetch("https://mindless-flute.glitch.me"+url).then(response => {
-  return fetch("https://mindless-flute.glitch.me"+url).then(response => {
+  return fetch("https://quotefcc.glitch.me"+url).then(response => {
       if (response.status == 200) {
         //return response.json();
         return response;
       } else {
         $("#quoteButton").removeAttr("disabled");
-        alert("loadJson: throwing error"); 
+        //reportError(response);
+        alert("loadJson: throwing error:"); 
         throw new HttpError(response);
       }
-    })
+    });
 }
 
 class HttpError extends Error { // (1)

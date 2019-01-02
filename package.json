@@ -12,7 +12,9 @@
   "dependencies": {
     "express": "^4.16.4",
     "unirest": "^0.5.1",
-    "lowdb": "^1.0.0"
+    "lowdb": "^1.0.0",
+    "node-redis": "^0.1.7",
+    "redis-node": "^0.4.0"
   },
   "engines": {
     "node": "8.0.0"

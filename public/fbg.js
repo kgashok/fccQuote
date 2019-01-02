@@ -1,5 +1,6 @@
 /* After a lot of back and forth, this has been achieved.  */ 
-
+// Not used since migration to new glitch project 
+// Causing errors if included in index.html
 
 window.fbAsyncInit = function() {
   FB.init({
