@@ -17,7 +17,7 @@
     "redis-node": "^0.4.0"
   },
   "engines": {
-    "node": "8.0.0"
+    "node": "^9.11.2"
   },
   "repository": {
     "type": "git",
