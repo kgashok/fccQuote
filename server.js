@@ -19,31 +19,32 @@ app.get('/responses', function (request, response) {
 });
 
 app.get('/generate', async function (request, response) {
-  const seed = request.query.rnumber;
-  if (!/^\d{1,6}$/.test(seed || '')) {
-    return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
-  }
-
   try {
+    const lastQuote = db.get('quotes').last().value();
     const options = { signal: AbortSignal.timeout(10000) };
-    const countResponse = await fetch('https://dummyjson.com/quotes?limit=1', options);
-    if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
-    const count = (await countResponse.json()).total;
-    if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
-    const id = Number(seed) % count + 1;
-    const apiResponse = await fetch('https://dummyjson.com/quotes/' + id, options);
-    if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
-    const data = await apiResponse.json();
-    if (!data.quote || !data.author || !Number.isInteger(data.id)) {
-      throw new Error('Quote source returned invalid data');
+    let data;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const apiResponse = await fetch('https://dummyjson.com/quotes/random', options);
+      if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
+      const candidate = await apiResponse.json();
+      if (!candidate.quote || !candidate.author || !Number.isInteger(candidate.id)) {
+        throw new Error('Quote source returned invalid data');
+      }
+      if (!lastQuote || candidate.id !== lastQuote.id) {
+        data = candidate;
+        break;
+      }
     }
+    if (!data) throw new Error('Quote source repeated the previous quote');
     const quote = {
       quoteText: data.quote,
       quoteAuthor: data.author,
       quoteLink: '/print/' + data.id,
       id: data.id
     };
-    db.get('quotes').push(quote).write();
+    if (!db.get('quotes').some({ id: quote.id }).value()) {
+      db.get('quotes').push(quote).write();
+    }
     response.json(quote);
   } catch (error) {
     console.error('Could not fetch quote:', error);

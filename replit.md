@@ -1,3 +1,3 @@
 # Running the quote generator
 
-This is an Express app running on Node.js 20. Install dependencies with `npm install` and start it with `npm start`; the Replit "Start application" workflow runs that command on port 5000. The app stores generated quotes in `.data/db.json` (ignored by Git). It fetches quotes from DummyJSON's public quotes API, using the entered number to select a quote; no API key is required, but generating quotes requires that service to be reachable.
+This is an Express app running on Node.js 20. Install dependencies with `npm install` and start it with `npm start`; the Replit "Start application" workflow runs that command on port 5000. The app stores generated quotes in `.data/db.json` (ignored by Git). Each click fetches a random quote from DummyJSON's public quotes API and skips the previous quote if it is returned again; no API key is required, but generating quotes requires that service to be reachable.

@@ -6,7 +6,7 @@
 
 ## Running
 
-Install dependencies with `npm install` and start with `npm start`. The server listens on port 5000 by default (or `PORT` when provided). Enter a number from 0 to 999999 to select a quote, or use the default number. Quotes come from the public [DummyJSON quotes API](https://dummyjson.com/docs/quotes) and are saved locally in `.data/db.json`. No API key is required.
+Install dependencies with `npm install` and start with `npm start`. The server listens on port 5000 by default (or `PORT` when provided). Each click fetches a random quote from the public [DummyJSON quotes API](https://dummyjson.com/docs/quotes), skipping the last quote if the source returns it again. Quotes are saved locally in `.data/db.json`. No API key is required.
   
   
 ## Updates on Express framework

@@ -4,9 +4,8 @@ $(function () {
   $('form').submit(async function (event) {
     event.preventDefault();
     var button = $('#quoteButton').prop('disabled', true);
-    var seed = $('#uNumber').val() || $('#uNumber').attr('placeholder');
     try {
-      await loadJson('/generate?' + $.param({ rnumber: seed }));
+      await loadJson('/generate');
       await refreshQuotes();
     } catch (error) {
       showError(error);
