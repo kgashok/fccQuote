@@ -1,134 +1,71 @@
-// server.js
-// where your node app starts
-// init project
-var express = require('express');
-var app = express();
+const express = require('express');
+const fs = require('fs');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 
+const app = express();
+fs.mkdirSync('.data', { recursive: true });
+const db = low(new FileSync('.data/db.json'));
+db.defaults({ quotes: [] }).write();
 
-// Simple in-memory store for now
-var quoteList = [];
-// setup a new database
-// persisted using async file storage
-// Security note: the database is saved to the file `db.json` on the local filesystem.
-// It's deliberately placed in the `.data` directory which doesn't get copied if someone remixes the project.
-var low = require('lowdb');
-var FileSync = require('lowdb/adapters/FileSync');
-var adapter = new FileSync('.data/db.json');
-var db = low(adapter);
-// default quote list
-db.defaults({ quotes: [] })
-  .write();
-//var redis = require("redis-node");
-//var redisClient = redis.createClient();
-var rest = require('unirest');
-//var $ = require('jquery'); 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
-// http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
-app.use("/generate", function(req, res, next) {
-  //console.log(req);
-  var rnumber = req.query.rnumber;
-  if (rnumber === undefined || rnumber > 999999) { 
-    console.log("Bad random seed!", rnumber);
-    //https://stackoverflow.com/a/38158081/307454
-    //res.sendStatus(500);
-    res.status(500).send("Bad random seed: " + rnumber);
-  }
-  else 
-    next();
-});
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (request, response) {
+
+app.get('/', function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
-app.get("/responses", function (request, response) {
-  var dbQuoteList=[];
-  var quotes = db.get('quotes').value();
-  quotes.forEach(quote=> dbQuoteList.unshift(quote));
-  response.send(dbQuoteList);
-  //response.send(quoteList);
-});
-// could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.get("/generate", function (request, response) {
-  console.log("inside app post"); 
-  getQuote(request.query, function funcToInvokeAfterUnirestPOST(resp) {
-    var responseQA = resp.body;
-    if (typeof responseQA === "string" || responseQA instanceof String) {
-      console.log("**** received string instead of Object!"); 
-      //responseQA = responseQA.replace('/u005c','\u005c\u005c');
-      responseQA = responseQA.replace(/\\'/g, "'");
-      try {
-        responseQA = JSON.parse(responseQA);  
-      } catch (e) { 
-        console.log("Bad JSON string", responseQA);
-        // need to return with a response
-        // otherwise, a "undefined" will show up
-      }
-    }
-    db.get('quotes')
-      .push(responseQA)
-      .write();
-    console.log("New quote inserted in the database");  
-    
-    // legacy, in-memory store, can be removed 
-    quoteList.unshift(responseQA);
-    //console.log(quoteList);
-    // response.send(request.query.dream + ":("+ resp.body.score +")" + resp.body.answer);
-    //response.send(resp.request.path + " :("+ resp.body.score +")" + resp.body.answer);
-    // response.send ("junk");
-  });
-  response.sendStatus(200);
-  //response.send(quoteList[quoteList.length-1]);
-});
-/*
- * STEP 1 : Setup the URL to point at the Forismatic API
- * STEP 2 : Build the query with a random number 
- * STEP 3 : Make the Unirest POST call
- */
-function getQuote (query, funcToInvokeAfterUnirestPOST) {
-  var quoteApi = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
-  // STEP 2
-  console.log("****** rnumber", query.rnumber);
-  //var payload = {"key": query.question, "lang": "en"};
-  var payload = {"key": query.rnumber, "lang": "en"};
-  // STEP 3
-  rest.post(quoteApi)
-    .type('json')
-    .send(payload)
-    .end(function funcToInvokeAfterQandA (responseFromQandA) {  
-    if (funcToInvokeAfterUnirestPOST)  // Was a callback function specified? 
-      funcToInvokeAfterUnirestPOST(responseFromQandA);
-    else  // otherwise send the response to the console 
-      console.log(responseFromQandA.body);
-  });
-}
 
-function isJsonObject(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    console.log("bad JSON string" + str);
-    return false;
+app.get('/responses', function (request, response) {
+  response.json(db.get('quotes').value().slice().reverse());
+});
+
+app.get('/generate', async function (request, response) {
+  const seed = request.query.rnumber;
+  if (!/^\d{1,6}$/.test(seed || '')) {
+    return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
   }
-  console.log("good JSON string" + str); 
-  return true;
-}
 
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+  try {
+    const options = { signal: AbortSignal.timeout(10000) };
+    const countResponse = await fetch('https://dummyjson.com/quotes?limit=1', options);
+    if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
+    const count = (await countResponse.json()).total;
+    if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
+    const id = Number(seed) % count + 1;
+    const apiResponse = await fetch('https://dummyjson.com/quotes/' + id, options);
+    if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
+    const data = await apiResponse.json();
+    if (!data.quote || !data.author || !Number.isInteger(data.id)) {
+      throw new Error('Quote source returned invalid data');
+    }
+    const quote = {
+      quoteText: data.quote,
+      quoteAuthor: data.author,
+      quoteLink: '/print/' + data.id,
+      id: data.id
+    };
+    db.get('quotes').push(quote).write();
+    response.json(quote);
+  } catch (error) {
+    console.error('Could not fetch quote:', error);
+    response.status(502).json({ error: 'Could not fetch a quote right now. Please try again.' });
+  }
+});
+
+app.get('/print/:id', function (request, response) {
+  const quote = db.get('quotes').find({ id: Number(request.params.id) }).value();
+  if (!quote) return response.sendStatus(404);
+  const escape = function (text) {
+    return String(text).replace(/[&<>"']/g, function (char) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
+    });
+  };
+  response.send('<!doctype html><html><head><meta charset="utf-8"><title>Printable quote</title>' +
+    '<style>body{max-width:40rem;margin:4rem auto;padding:1rem;font:1.4rem Georgia,serif;line-height:1.5}' +
+    '@media print{button{display:none}}</style></head><body><blockquote>' +
+    escape(quote.quoteText) + '</blockquote><p>— ' + escape(quote.quoteAuthor) +
+    '</p><button onclick="window.print()">Print</button></body></html>');
+});
+
+const listener = app.listen(process.env.PORT || 5000, '0.0.0.0', function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
-/*
-function getHTML(url, next) {
-  var unirest = require('unirest');
-  unirest.get(url)
-    .end(function(response) {
-      var body = response.body;
-      if (next) next(body);
-    });
-}
-getHTML('http://purple.com/', function(html) {
-  console.log(html);
-});
-*/

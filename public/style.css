@@ -37,33 +37,11 @@ footer > a {
 .nicejob {
   text-decoration: line-through;
 }
-div#share>a, a.noscr{
-  float:left;
-  display:block;
-  background:url(https://cdn.gomix.com/bf1bd29b-8d14-43b2-86cb-cb2a443cab08%2FtwitterIcons.png) no-repeat;
-  width:20px;
-  height:20px;
-  margin-top:10px;
-  outline:none
-}
-a#t {
-  background-position:0 -1px !important;
-}
-a#t:hover {
-  background-position:0 -21px !important
-}
-a#vk {
-  background-position:1px -41px !important;
-  margin:6px 6px 0 0
-}
-a#vk:hover {
-  background-position:1px -61px !important
-}
-a#f {
-  background-position:1px -81px !important;
-}
-a#f:hover {
-  background-position:1px -101px !important
+div#share > a {
+  display: inline-block;
+  margin: 8px 0;
+  color: #0865a7;
+  font-size: 14px;
 }
 a#quote:hover {
   color: darkorange;  

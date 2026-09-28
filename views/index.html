@@ -9,8 +9,8 @@
 <html>
   <head>
     <title> Random Quote Generator</title>
-    <meta name="description" content="Generating Quotes using Forismatic API">
-    <link id="favicon" rel="icon" href="https://bit.ly/geniusIcon" type="image/x-icon">
+    <meta name="description" content="Generate and print quotes">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='.9em' font-size='52'%3E%26%238220;%3C/text%3E%3C/svg%3E">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,13 +21,10 @@
     <header>
       <p>
         <a href="https://github.com/kgashok/fccQuote/issues/new" target="_">Issues?</a>; last <a href="https://github.com/kgashok/fccQuote/commits/glitch" target = "_">checkin</a>
-        or <a href="https://saythanks.io/to/kgashok" target="_"> 
+        or <a href="https://saythanks.io/to/lifebalance&fccQuote" target="_"> 
         <button class="button"> Say Thanks! </button> </a>
       </p>
     </header>
-    <fb:login-button scope="public_profile,user_friends" autologoutlink="true" onlogin="OnRequestPermission();">  
-    </fb:login-button>
-    <div id="fb-root"></div>
     <main>
       <h1>
         RANDOM QUOTE GENERATOR 
@@ -37,10 +34,10 @@
         </ul>
       </section>
       <form>
-        <input id="uNumber" type="text" maxlength="100" placeholder="902311">
+        <input id="uNumber" type="number" min="0" max="999999" placeholder="902311" aria-label="Quote number (0–999999)">
         <button id="quoteButton" type="submit">Get Quote!</button>
       </form>
-      <button type="submit" onclick="clearTheBox()">Reset (on the server!)</button>
+      <button type="button" onclick="clearTheBox()">Clear display</button>
       <section class="responses">
         <ul id="quotestream">
         </ul>
@@ -61,10 +58,6 @@
          data-show-faces="true">
     </div>
     </footer>
-  <!-- include the Glitch button to show what the webpage is about and
-to make it easier for folks to view source and remix -->
-  <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-  <script src="https://button.glitch.me/button.js"></script>
   <!-- Your web-app is https, so your scripts need to be too -->
   <script src="https://code.jquery.com/jquery-2.2.1.min.js"
           integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="

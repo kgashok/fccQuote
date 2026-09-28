@@ -4,20 +4,17 @@
   "//3": "updating this file will download and update your packages",
   "name": "my-hyperdev-app",
   "version": "0.0.1",
-  "description": "Using forismatic to generate quotes",
+  "description": "Generate and save quotes from DummyJSON",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4",
-    "unirest": "^0.5.1",
-    "lowdb": "^1.0.0",
-    "node-redis": "^0.1.7",
-    "redis-node": "^0.4.0"
+    "express": "^4.22.3",
+    "lowdb": "^1.0.0"
   },
   "engines": {
-    "node": "^9.11.2"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
@@ -27,7 +24,7 @@
     "node",
     "hyperdev",
     "express",
-    "unirest"
+    "quotes"
   ],
   "license": "MIT"
 }

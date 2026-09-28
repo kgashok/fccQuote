@@ -1,162 +1,60 @@
-// client-side js
-// run by the browser each time your view template is loaded
+$(function () {
+  refreshQuotes().catch(showError);
 
-$(function() {
-  // This is invoked to refresh previously generated
-  // quotations, if any 
-  $.get('/responses', function funcInvokedAfterGET(responses) {
-    console.log("**** Inside get() call ");
-    if ($('ul#responses').children().length == 0){
-      displayAllQuotes(responses);
+  $('form').submit(async function (event) {
+    event.preventDefault();
+    var button = $('#quoteButton').prop('disabled', true);
+    var seed = $('#uNumber').val() || $('#uNumber').attr('placeholder');
+    try {
+      await loadJson('/generate?' + $.param({ rnumber: seed }));
+      await refreshQuotes();
+    } catch (error) {
+      showError(error);
+    } finally {
+      button.prop('disabled', false).focus();
     }
   });
-
-
-  // function that is invoked when the "Get Quote" button 
-  // is pressed
-  $('form').submit(async function(event) {
-    console.log ("Inside submit");
-    // what is this preventDefault? what does this do? 
-    event.preventDefault();
-    $("#quoteButton").attr("disabled", true);
-    
-    // We need to figure out two arguments to make 
-    // the POST call 
-    // Step 1 - prepare the random number to send as query 
-    // Step 2 - get the Quote from the forismatic API
-    
-    var fullRoute = "/generate?"; 
-    //var params = {"uNumber": "457653"};
-    var randomSeed = $("#uNumber").val() !== "" ? 
-        $("#uNumber").val() : $("#uNumber").attr("placeholder");
-    console.log("**** randomSeed ", randomSeed);
-    var args = {"rnumber": randomSeed};
-    console.log("***** Params: ", args);
-    fullRoute += $.param(args);
-    
-    // STEP 2 - prepare the POST request to the server
-    /*
-    $.get(fullRoute,function funcInvokedAfterPOST(postInfo){
-      // this is the callback function which gets
-      // called after the server is done serving the request
-      // Before we can "refresh" to get the results,
-      // we invoke a setTimeOut with a callback function
-      console.log ("Back from Server call: ", postInfo);
-      window.setTimeout(function afterTimeOut(){
-        $.get("/responses", function (responses) {
-          // this is very expensive...
-          // why not pick the last added quote and display that alone? 
-          $("ul#responses").empty();
-          displayAllQuotes(responses);
-        });
-        $("#quoteButton").focus();
-      },1500);  // some arbitrary value - may not be sufficient
-      console.log ("*** Reaching end of POST call");
-    }) // end of post call
-    .fail(response => reportError(response));
-    */
-    await loadJson(fullRoute, args)
-      //.then(response => console.log(response))
-      .then(console.log("*** Reaching end of POST call"))
-      //.catch(console.log("Getting JSON data failed!"));
-      .catch(response => {
-          // Something other than an HTTP error has occurred
-          if (response !== null) {
-            reportError(response); 
-          } else { 
-            alert ("Error getting data! Please try with https:");
-            $("#quoteButton").removeAttr("disabled");
-          }
-      });
-    
-    await sleep(1500);
-
-    await loadJson("/responses")
-      .then(responses => responses.json())
-      .then(quotes => {
-        $("ul#quotestream").empty(); // very expensive! 
-        displayAllQuotes(quotes);
-      });
-
-    $("#quoteButton").removeAttr("disabled");
-    $("#quoteButton").focus();
-    console.log ("*** Reaching end of Submit call");
-  }); // end of submit call
-
 });
 
-async function sleep(ms) {
-  await new Promise(resolve => setTimeout(resolve, ms))
-  console.log("Sleep done!" );
-}
-
-function loadJson(url, data = {}) { // (2)
-  return fetch("https://quotefcc.glitch.me"+url).then(response => {
-      if (response.status == 200) {
-        //return response.json();
-        return response;
-      } else {
-        $("#quoteButton").removeAttr("disabled");
-        //reportError(response);
-        alert("loadJson: throwing error:"); 
-        throw new HttpError(response);
-      }
-    });
-}
-
-class HttpError extends Error { // (1)
-  constructor(response) {
-    super(`${response.status} for ${response.url}`);
-    this.name = 'HttpError';
-    this.response = response;
+async function loadJson(url) {
+  var response = await fetch(url);
+  if (!response.ok) {
+    var body = await response.json().catch(function () { return {}; });
+    throw new Error(body.error || 'Request failed (' + response.status + ')');
   }
+  return response.json();
 }
 
-
-function reportError(response) { 
-    // https://stackoverflow.com/a/11820453/307454
-    // console.log(response);
-    console.log("***Server returns error", 
-                response.status, response.responseText);
+async function refreshQuotes() {
+  var quotes = await loadJson('/responses');
+  $('ul#quotestream').empty();
+  quotes.forEach(addQuoteToDisplay);
 }
 
-function clearTheBox () { 
-  console.log ("inside clear the box!");
-  $("ul#quotestream").empty(); 
-  // but does not clear the actual quote list...
-  // So, it is not a deep clean! 
+function showError(error) {
+  console.error(error);
+  alert(error.message || 'Could not get a quote. Please try again.');
 }
 
-
-function displayAllQuotes (quotes) { 
-  //console.log(quotes);
-  quotes.forEach(function(quote) {
-    //$('<li></li>').text(response).appendTo('ul#responses');
-    addQuoteToDisplay(quote);
-  });
-  //$("#responses").selector("first-child");
-  // $("#responses").html(data);  
+function clearTheBox() {
+  $('ul#quotestream').empty();
 }
 
-function addQuoteToDisplay (response) {
-    var tweeter = '<div id=\"share\">\
-      <a target=\"_blank\" id=\"t\" href=\"http://twitter.com/intent/tweet?text=';
-    tweeter = tweeter + response.quoteText; 
-    tweeter = tweeter + '- ' + response.quoteAuthor;
-    tweeter = tweeter + ' @lifebalance" title=\"Write\"></a></div>';
-      
-    var responseHTML = tweeter + '\
-      <blockquote class="quote">\
-          <a target=\"_blank\" id = "quote" href=\"'+response.quoteLink+'\">\
-            '+response.quoteText+'</a>\
-        <br/>\
-        <small>\
-          <a target="_blank" href="http://en.wikipedia.org/wiki/'+response.quoteAuthor+'\">\
-            '+response.quoteAuthor+'</a>\
-        </small>\
-      </blockquote>';
-
-    //console.log (responseHTML);
-    $('<ul></ul>').html(responseHTML).appendTo('ul#quotestream');
+function addQuoteToDisplay(quote) {
+  var item = $('<li></li>');
+  var share = $('<div id="share"></div>').appendTo(item);
+  $('<a target="_blank" rel="noopener" id="t" title="Tweet this quote">Tweet</a>')
+    .attr('href', 'https://twitter.com/intent/tweet?text=' +
+      encodeURIComponent(quote.quoteText + ' - ' + quote.quoteAuthor))
+    .appendTo(share);
+  var block = $('<blockquote class="quote"></blockquote>').appendTo(item);
+  $('<a target="_blank" rel="noopener" id="quote"></a>')
+    .attr('href', quote.quoteLink).text(quote.quoteText).appendTo(block);
+  block.append('<br>');
+  $('<small></small>').append(
+    $('<a target="_blank" rel="noopener"></a>')
+      .attr('href', 'https://en.wikipedia.org/wiki/' + encodeURIComponent(quote.quoteAuthor))
+      .text(quote.quoteAuthor)
+  ).appendTo(block);
+  item.appendTo('ul#quotestream');
 }
-

@@ -4,11 +4,9 @@
 2. Click on the author to know more about him on Wikipedia
 3. Click on the actual quote itself to generate a Printable version
 
-## API Used 
+## Running
 
-http://forismatic.com/en/api/ 
-  - I first used the output in the HTML version 
-  - And then switched to the JSON version to make it more versatile 
+Install dependencies with `npm install` and start with `npm start`. The server listens on port 5000 by default (or `PORT` when provided). Enter a number from 0 to 999999 to select a quote, or use the default number. Quotes come from the public [DummyJSON quotes API](https://dummyjson.com/docs/quotes) and are saved locally in `.data/db.json`. No API key is required.
   
   
 ## Updates on Express framework
