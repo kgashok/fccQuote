@@ -35,7 +35,7 @@ localPort = 5000
 
 [deployment]
 deploymentTarget = "static"
-publicDir = "views"
+publicDir = "public"
 
 [postMerge]
 path = "scripts/post-merge.sh"
