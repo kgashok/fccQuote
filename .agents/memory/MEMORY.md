@@ -1,0 +1,1 @@
+- [Preview port forwarding](preview-port-forwarding.md) — a healthy server can still fail webview readiness when public port forwarding is missing.

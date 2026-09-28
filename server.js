@@ -27,21 +27,24 @@ function createApp(options) {
 
   app.get('/generate', async function (request, response) {
     const seed = request.query.rnumber;
-    if (!/^\d{1,6}$/.test(seed || '')) {
+    if (seed !== undefined && !/^\d{1,6}$/.test(seed || '')) {
       return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
     }
 
     try {
       const lastQuote = db.get('quotes').last().value();
       const fetchOptions = { signal: AbortSignal.timeout(10000) };
-      const countResponse = await fetchQuote('https://dummyjson.com/quotes?limit=1', fetchOptions);
-      if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
-      const count = (await countResponse.json()).total;
-      if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
-      const requestedId = Number(seed) % count + 1;
+      let requestedId;
+      if (seed !== undefined) {
+        const countResponse = await fetchQuote('https://dummyjson.com/quotes?limit=1', fetchOptions);
+        if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
+        const count = (await countResponse.json()).total;
+        if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
+        requestedId = Number(seed) % count + 1;
+      }
       let data;
       for (let attempt = 0; attempt < 5; attempt++) {
-        const quoteUrl = attempt === 0
+        const quoteUrl = attempt === 0 && requestedId !== undefined
           ? 'https://dummyjson.com/quotes/' + requestedId
           : 'https://dummyjson.com/quotes/random';
         const apiResponse = await fetchQuote(quoteUrl, fetchOptions);

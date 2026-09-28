@@ -22,20 +22,21 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm start"
 waitForPort = 5000
 
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [[ports]]
 localPort = 5000
+externalPort = 80
 
 [deployment]
-deploymentTarget = "static"
-publicDir = "public"
+deploymentTarget = "vm"
+run = ["npm", "start"]
 
 [postMerge]
 path = "scripts/post-merge.sh"

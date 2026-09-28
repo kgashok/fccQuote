@@ -60,7 +60,6 @@ test('GET /generate rejects invalid inputs without contacting the quote source',
   const stub = stubFetch([]);
   const baseUrl = await startApp(t, stub.fetchImpl);
   const invalidPaths = [
-    '/generate',
     '/generate?rnumber=',
     '/generate?rnumber=-1',
     '/generate?rnumber=1.5',
@@ -76,6 +75,27 @@ test('GET /generate rejects invalid inputs without contacting the quote source',
     });
   }
   assert.equal(stub.calls.length, 0);
+});
+
+test('GET /generate without a number fetches a new random quote on each click', async function (t) {
+  const stub = stubFetch([
+    upstreamResponse({ id: 1, quote: 'First quote', author: 'Author One' }),
+    upstreamResponse({ id: 1, quote: 'First quote', author: 'Author One' }),
+    upstreamResponse({ id: 2, quote: 'Second quote', author: 'Author Two' })
+  ]);
+  const baseUrl = await startApp(t, stub.fetchImpl);
+
+  const first = await (await fetch(baseUrl + '/generate')).json();
+  const second = await (await fetch(baseUrl + '/generate')).json();
+  assert.equal(first.id, 1);
+  assert.equal(second.id, 2);
+  assert.deepEqual(stub.calls.map(function (call) { return call.url; }), [
+    'https://dummyjson.com/quotes/random',
+    'https://dummyjson.com/quotes/random',
+    'https://dummyjson.com/quotes/random'
+  ]);
+  const saved = await (await fetch(baseUrl + '/responses')).json();
+  assert.deepEqual(saved, [second, first]);
 });
 
 test('GET /generate saves a quote that appears in /responses and /print/:id', async function (t) {
