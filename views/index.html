@@ -39,16 +39,8 @@
           <option value="dummyjson">DummyJSON (random quotes)</option>
           <option value="favqs">FavQs (Quote of the Day)</option>
           <option value="they-said-so">They Said So (Quote of the Day)</option>
-          <option value="quotable">Quotable (random quotes)</option>
+          <option value="zenquotes">ZenQuotes (random quotes)</option>
         </select>
-        <div id="quotableOptions" hidden>
-          <label for="quoteTags">Quotable tags (optional; comma for AND, | for OR):</label>
-          <input id="quoteTags" type="text" placeholder="technology|history">
-          <label for="minLength">Minimum quote length:</label>
-          <input id="minLength" type="number" min="0" step="1">
-          <label for="maxLength">Maximum quote length:</label>
-          <input id="maxLength" type="number" min="0" step="1">
-        </div>
         <button id="quoteButton" type="submit">Get Quote!</button>
       </form>
       <button type="button" onclick="clearTheBox()">Clear display</button>
@@ -58,6 +50,7 @@
       </section>
     </main>
     <footer>
+      <p>Inspirational quotes provided by <a href="https://zenquotes.io/" target="_blank" rel="noopener">ZenQuotes API</a>.</p>
       <p>
         <il>1. Click on the <b>author</b> to get more information on Wikipedia  </il><br>
         <il>2. Click anywhere on the <strong>quote</strong> to generate a printable version </il><br>

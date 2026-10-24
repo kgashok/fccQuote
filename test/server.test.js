@@ -163,54 +163,77 @@ test('GET /generate can fetch and save the authenticated They Said So quote of t
   assert.equal((await fetch(baseUrl + first.quoteLink)).status, 200);
 });
 
-test('GET /generate fetches and saves a filtered Quotable quote without an API key', async function (t) {
-  const quotableResponse = upstreamResponse([{
-    _id: 'quote-456',
-    content: 'A Quotable quote',
-    author: 'Quotable Author'
-  }]);
-  const stub = stubFetch([quotableResponse, quotableResponse]);
+test('GET /generate saves and prints ZenQuotes with original times and caches the batch', async function (t) {
+  const stub = stubFetch([upstreamResponse([{
+    q: 'A ZenQuotes quote',
+    a: 'ZenQuotes Author'
+  }])]);
   const baseUrl = await startApp(t, stub.fetchImpl);
 
   const page = await (await fetch(baseUrl + '/')).text();
-  assert.match(page, /<option value="quotable">Quotable \(random quotes\)<\/option>/);
-  assert.match(page, /id="quotableOptions" hidden/);
-  assert.match(page, /id="quoteTags"/);
-  assert.match(page, /id="minLength"/);
-  assert.match(page, /id="maxLength"/);
+  assert.match(page, /<option value="zenquotes">ZenQuotes \(random quotes\)<\/option>/);
+  assert.doesNotMatch(page, /value="quotable"|quotableOptions|quoteTags/);
+  assert.match(page, /href="https:\/\/zenquotes.io\/"/);
 
-  const route = '/generate?source=quotable&tags=technology%7Chistory&minLength=12&maxLength=140';
+  const route = '/generate?source=zenquotes';
   const first = await (await fetch(baseUrl + route)).json();
   const repeated = await (await fetch(baseUrl + route)).json();
   assert.deepEqual(first, {
-    quoteText: 'A Quotable quote',
-    quoteAuthor: 'Quotable Author',
-    quoteLink: '/print/quotable-quote-456',
-    id: 'quotable-quote-456',
+    quoteText: 'A ZenQuotes quote',
+    quoteAuthor: 'ZenQuotes Author',
+    quoteLink: '/print/' + first.id,
+    id: first.id,
     generatedAt: first.generatedAt
   });
   assert.deepEqual(repeated, first);
-  assert.equal(stub.calls[0].url,
-    'https://api.quotable.io/quotes/random?tags=technology%7Chistory&minLength=12&maxLength=140');
+  assert.match(first.id, /^zenquotes-[a-f0-9]{64}$/);
+  assert.ok(Number.isFinite(Date.parse(first.generatedAt)));
+  assert.equal(stub.calls.length, 1);
+  assert.equal(stub.calls[0].url, 'https://zenquotes.io/api/quotes');
   assert.ok(stub.calls.every(function (call) {
     return call.options.signal instanceof AbortSignal;
   }));
   assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);
-  assert.equal((await fetch(baseUrl + first.quoteLink)).status, 200);
+  const printed = await fetch(baseUrl + first.quoteLink);
+  assert.equal(printed.status, 200);
+  const printHtml = await printed.text();
+  assert.ok(printHtml.includes(first.generatedAt));
+  assert.match(printHtml, /href="https:\/\/zenquotes.io\/"/);
 });
 
-test('GET /generate rejects invalid Quotable filters without contacting the provider', async function (t) {
+test('GET /generate rejects the retired source and unsupported filters without contacting a provider', async function (t) {
   const stub = stubFetch([]);
   const baseUrl = await startApp(t, stub.fetchImpl);
 
   for (const route of [
-    '/generate?source=quotable&minLength=-1',
-    '/generate?source=quotable&minLength=20&maxLength=10',
-    '/generate?source=quotable&tags=technology%7C'
+    '/generate?source=quotable',
+    '/generate?source=zenquotes&minLength=20',
+    '/generate?source=zenquotes&maxLength=10',
+    '/generate?source=zenquotes&tags=history'
   ]) {
     assert.equal((await fetch(baseUrl + route)).status, 400, route);
   }
   assert.equal(stub.calls.length, 0);
+});
+
+test('ZenQuotes reports rate limits, bad data, and network errors without saving error messages as quotes', async function (t) {
+  const cases = [
+    { value: upstreamResponse({}, 429), status: 429, message: /rate limited/ },
+    { value: upstreamResponse({}, 503), status: 502, message: /unavailable/ },
+    { value: upstreamResponse([]), status: 502, message: /unavailable/ },
+    { value: upstreamResponse([{ q: 'Too many requests', a: 'zenquotes.io' }]), status: 502, message: /unavailable/ },
+    { value: upstreamResponse([{ q: 'Missing author' }]), status: 502, message: /unavailable/ },
+    { value: new Error('Network failure'), status: 502, message: /unavailable/ }
+  ];
+  for (const example of cases) {
+    const stub = stubFetch([example.value]);
+    const baseUrl = await startApp(t, stub.fetchImpl);
+    const response = await fetch(baseUrl + '/generate?source=zenquotes');
+    assert.equal(response.status, example.status);
+    assert.match((await response.json()).error, example.message);
+    if (example.status === 429) assert.equal(response.headers.get('retry-after'), '30');
+    assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), []);
+  }
 });
 
 test('GET /generate requires a They Said So API key without contacting the provider', async function (t) {

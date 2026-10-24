@@ -7,10 +7,6 @@ function formatTimestamp(date) {
 
 $(function () {
   refreshQuotes().catch(showError);
-  $('#quotableOptions').prop('hidden', $('#quoteSource').val() !== 'quotable');
-  $('#quoteSource').change(function () {
-    $('#quotableOptions').prop('hidden', $(this).val() !== 'quotable');
-  });
 
   $('form').submit(async function (event) {
     event.preventDefault();
@@ -18,12 +14,6 @@ $(function () {
     try {
       var source = $('#quoteSource').val();
       var params = new URLSearchParams({ source: source });
-      if (source === 'quotable') {
-        ['tags', 'minLength', 'maxLength'].forEach(function (name) {
-          var value = $('#' + (name === 'tags' ? 'quoteTags' : name)).val().trim();
-          if (value) params.set(name, value);
-        });
-      }
       await loadJson('/generate?' + params.toString());
       await refreshQuotes();
     } catch (error) {

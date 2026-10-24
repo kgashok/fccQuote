@@ -4,12 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const { createZenQuotesProvider } = require('./services/zenquotes');
 
 function createApp(options) {
   options = options || {};
   const databaseFile = options.databaseFile || path.join(__dirname, '.data', 'db.json');
   const fetchQuote = options.fetchImpl || global.fetch;
   const logger = options.logger || console;
+  const getZenQuote = createZenQuotesProvider(fetchQuote);
   const theySaidSoApiKey = options.theySaidSoApiKey === undefined
     ? process.env.THEYSAIDSO_API_KEY
     : options.theySaidSoApiKey;
@@ -32,7 +34,7 @@ function createApp(options) {
   app.get('/generate', async function (request, response) {
     const seed = request.query.rnumber;
     const source = request.query.source || 'dummyjson';
-    if (!['dummyjson', 'favqs', 'they-said-so', 'quotable'].includes(source)) {
+    if (!['dummyjson', 'favqs', 'they-said-so', 'zenquotes'].includes(source)) {
       return response.status(400).json({ error: 'Choose a supported quote source.' });
     }
     if (source === 'they-said-so' && !theySaidSoApiKey) {
@@ -41,25 +43,10 @@ function createApp(options) {
     if (seed !== undefined && !/^\d{1,6}$/.test(seed || '')) {
       return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
     }
-    if (source === 'quotable') {
-      const minLength = request.query.minLength;
-      const maxLength = request.query.maxLength;
-      const tags = request.query.tags;
-      if ([minLength, maxLength].some(function (length) {
-        return length !== undefined &&
-          (typeof length !== 'string' || !/^\d+$/.test(length) || !Number.isSafeInteger(Number(length)));
-      })) {
-        return response.status(400).json({ error: 'Quote lengths must be non-negative integers.' });
-      }
-      if (minLength !== undefined && maxLength !== undefined && Number(minLength) > Number(maxLength)) {
-        return response.status(400).json({ error: 'Minimum quote length cannot exceed maximum quote length.' });
-      }
-      if (tags !== undefined &&
-        (typeof tags !== 'string' || !/^[\w -]+(?:[|,][\w -]+)*$/.test(tags.trim()))) {
-        return response.status(400).json({ error: 'Enter valid Quotable tags separated by commas or |.' });
-      }
+    if (source === 'zenquotes' &&
+      ['tags', 'minLength', 'maxLength'].some(function (name) { return request.query[name] !== undefined; })) {
+      return response.status(400).json({ error: 'ZenQuotes does not support tag or quote-length filters.' });
     }
-
     try {
       const lastQuote = db.get('quotes').last().value();
       const fetchOptions = { signal: AbortSignal.timeout(10000) };
@@ -88,25 +75,8 @@ function createApp(options) {
         const id = 'they-said-so-' +
           crypto.createHash('sha256').update(String(candidate.id)).digest('hex');
         data = { id, quote: candidate.quote, author: candidate.author };
-      } else if (source === 'quotable') {
-        const query = new URLSearchParams();
-        if (request.query.tags) query.set('tags', request.query.tags.trim());
-        if (request.query.minLength !== undefined) query.set('minLength', request.query.minLength);
-        if (request.query.maxLength !== undefined) query.set('maxLength', request.query.maxLength);
-        const queryString = query.toString();
-        const apiResponse = await fetchQuote(
-          'https://api.quotable.io/quotes/random' + (queryString ? '?' + queryString : ''),
-          fetchOptions
-        );
-        if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
-        const payload = await apiResponse.json();
-        const candidate = Array.isArray(payload) ? payload[0] : payload;
-        if (!candidate || typeof candidate._id !== 'string' || !candidate._id.trim() ||
-          typeof candidate.content !== 'string' || !candidate.content.trim() ||
-          typeof candidate.author !== 'string' || !candidate.author.trim()) {
-          throw new Error('Quote source returned invalid data');
-        }
-        data = { id: 'quotable-' + candidate._id, quote: candidate.content, author: candidate.author };
+      } else if (source === 'zenquotes') {
+        data = await getZenQuote(lastQuote);
       } else {
         let requestedId;
         if (seed !== undefined) {
@@ -147,6 +117,14 @@ function createApp(options) {
       response.json(existingQuote || quote);
     } catch (error) {
       logger.error('Could not fetch quote:', error);
+      if (source === 'zenquotes') {
+        if (error.rateLimited) response.set('Retry-After', '30');
+        return response.status(error.rateLimited ? 429 : 502).json({
+          error: error.rateLimited
+            ? 'ZenQuotes is rate limited. Please wait 30 seconds and try again.'
+            : 'ZenQuotes is unavailable right now. Please try again or choose another source.'
+        });
+      }
       response.status(502).json({ error: 'Could not fetch a quote right now. Please try again.' });
     }
   });
@@ -168,6 +146,8 @@ function createApp(options) {
       '</p>' + (quote.generatedAt && Number.isFinite(Date.parse(quote.generatedAt))
         ? '<p><small>Generated <time datetime="' + escape(quote.generatedAt) + '">' +
           escape(quote.generatedAt) + '</time></small></p>'
+        : '') + (String(quote.id).startsWith('zenquotes-')
+        ? '<p><small>Inspirational quotes provided by <a href="https://zenquotes.io/">ZenQuotes API</a></small></p>'
         : '') + '<button onclick="window.print()">Print</button></body></html>');
   });
 
