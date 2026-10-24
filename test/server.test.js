@@ -156,7 +156,7 @@ test('GET /generate can fetch and save the authenticated They Said So quote of t
     'https://quotes.rest/qod?language=en'
   ]);
   assert.ok(stub.calls.every(function (call) {
-    return call.options.headers['X-TheySaidSo-Api-Secret'] === 'test-api-key' &&
+    return call.options.headers.Authorization === 'Bearer test-api-key' &&
       call.options.signal instanceof AbortSignal;
   }));
   assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);

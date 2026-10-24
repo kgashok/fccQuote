@@ -1,2 +1,3 @@
 - [Preview port forwarding](preview-port-forwarding.md) — a healthy server can still fail webview readiness when public port forwarding is missing.
 - [Quote time semantics](quote-time-semantics.md) — timestamps represent original generation, never page load; only display a time when known.
+- [They Said So auth docs](they-said-so-auth.md) — provider documentation mixes old header examples with current bearer-token authentication.

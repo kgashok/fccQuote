@@ -76,7 +76,7 @@ function createApp(options) {
       } else if (source === 'they-said-so') {
         const apiResponse = await fetchQuote('https://quotes.rest/qod?language=en', {
           ...fetchOptions,
-          headers: { 'X-TheySaidSo-Api-Secret': theySaidSoApiKey }
+          headers: { Authorization: 'Bearer ' + theySaidSoApiKey }
         });
         if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
         const candidate = (await apiResponse.json())?.contents?.quotes?.[0];
