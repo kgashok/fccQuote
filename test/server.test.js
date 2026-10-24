@@ -29,10 +29,11 @@ function stubFetch(responses) {
   };
 }
 
-async function startApp(t, fetchImpl) {
+async function startApp(t, fetchImpl, options) {
+  options = options || {};
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'quote-app-test-'));
   const app = createApp({
-    databaseFile: path.join(directory, 'db.json'),
+    databaseFile: options.databaseFile || path.join(directory, 'db.json'),
     fetchImpl,
     logger: { error: function () {} }
   });
@@ -116,8 +117,10 @@ test('GET /generate saves a quote that appears in /responses and /print/:id', as
     quoteText: '<script>alert("x")</script> & keep going',
     quoteAuthor: "A & B's",
     quoteLink: '/print/43',
-    id: 43
+    id: 43,
+    generatedAt: quote.generatedAt
   });
+  assert.ok(Number.isFinite(Date.parse(quote.generatedAt)));
   assert.deepEqual(stub.calls.map(function (call) {
     return call.url;
   }), [
@@ -142,6 +145,42 @@ test('GET /generate saves a quote that appears in /responses and /print/:id', as
 
   const missingPrintResponse = await fetch(baseUrl + '/print/999');
   assert.equal(missingPrintResponse.status, 404);
+});
+
+test('generation times persist across restarts; repeats and legacy records keep their original metadata', async function (t) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'quote-time-test-'));
+  t.after(function () { fs.rmSync(directory, { recursive: true, force: true }); });
+  const databaseFile = path.join(directory, 'db.json');
+  const original = {
+    id: 1, quoteText: 'Original', quoteAuthor: 'Author', quoteLink: '/print/1',
+    generatedAt: '2020-01-02T03:04:05.000Z'
+  };
+  const legacy = { id: 2, quoteText: 'Legacy', quoteAuthor: 'Author', quoteLink: '/print/2' };
+  fs.writeFileSync(databaseFile, JSON.stringify({ quotes: [original, legacy] }));
+  const stub = stubFetch([
+    upstreamResponse({ id: 3, quote: 'New', author: 'Author' }),
+    upstreamResponse({ id: 1, quote: 'Original', author: 'Author' }),
+    upstreamResponse({ id: 2, quote: 'Legacy', author: 'Author' })
+  ]);
+  const baseUrl = await startApp(t, stub.fetchImpl, { databaseFile });
+  const before = Date.now();
+  const newQuote = await (await fetch(baseUrl + '/generate')).json();
+  assert.ok(Date.parse(newQuote.generatedAt) >= before);
+  assert.ok(Date.parse(newQuote.generatedAt) <= Date.now());
+  assert.deepEqual(await (await fetch(baseUrl + '/generate')).json(), original);
+  assert.deepEqual(await (await fetch(baseUrl + '/generate')).json(), legacy);
+  const expected = [newQuote, legacy, original];
+  assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), expected);
+  assert.deepEqual(JSON.parse(fs.readFileSync(databaseFile, 'utf8')).quotes,
+    [original, legacy, newQuote]);
+
+  // A fresh app instance reads the original times back from disk.
+  const restartedUrl = await startApp(t, stubFetch([]).fetchImpl, { databaseFile });
+  assert.deepEqual(await (await fetch(restartedUrl + '/responses')).json(), expected);
+  const printed = await (await fetch(restartedUrl + '/print/1')).text();
+  assert.ok(printed.includes(original.generatedAt));
+  const legacyPrint = await (await fetch(restartedUrl + '/print/2')).text();
+  assert.ok(!legacyPrint.includes('<time'));
 });
 
 test('GET /generate reports upstream failures and does not save a quote', async function (t) {

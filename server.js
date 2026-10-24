@@ -63,12 +63,14 @@ function createApp(options) {
         quoteText: data.quote,
         quoteAuthor: data.author,
         quoteLink: '/print/' + data.id,
-        id: data.id
+        id: data.id,
+        generatedAt: new Date().toISOString()
       };
-      if (!db.get('quotes').some({ id: quote.id }).value()) {
+      const existingQuote = db.get('quotes').find({ id: quote.id }).value();
+      if (!existingQuote) {
         db.get('quotes').push(quote).write();
       }
-      response.json(quote);
+      response.json(existingQuote || quote);
     } catch (error) {
       logger.error('Could not fetch quote:', error);
       response.status(502).json({ error: 'Could not fetch a quote right now. Please try again.' });
@@ -87,7 +89,10 @@ function createApp(options) {
       '<style>body{max-width:40rem;margin:4rem auto;padding:1rem;font:1.4rem Georgia,serif;line-height:1.5}' +
       '@media print{button{display:none}}</style></head><body><blockquote>' +
       escape(quote.quoteText) + '</blockquote><p>— ' + escape(quote.quoteAuthor) +
-      '</p><button onclick="window.print()">Print</button></body></html>');
+      '</p>' + (quote.generatedAt && Number.isFinite(Date.parse(quote.generatedAt))
+        ? '<p><small>Generated <time datetime="' + escape(quote.generatedAt) + '">' +
+          escape(quote.generatedAt) + '</time></small></p>'
+        : '') + '<button onclick="window.print()">Print</button></body></html>');
   });
 
   return app;

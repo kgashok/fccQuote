@@ -1,7 +1,3 @@
-// Client-side only: remembers when each quote was first displayed (keyed by
-// quote id) so re-renders of the list keep a stable timestamp per quote.
-var quoteTimestamps = {};
-
 // Human-readable local date/time (YYYY-MM-DD HH:mm:ss) in the user's timezone.
 function formatTimestamp(date) {
   var pad = function (n) { return String(n).padStart(2, '0'); };
@@ -66,14 +62,14 @@ function addQuoteToDisplay(quote) {
       .attr('href', 'https://en.wikipedia.org/wiki/' + encodeURIComponent(quote.quoteAuthor))
       .text(quote.quoteAuthor)
   ).appendTo(block);
-  // Stamp the quote the first time it is rendered, i.e. when it is generated
-  // (or on first page load for quotes already stored); no backend storage.
-  var now = new Date();
-  if (!quoteTimestamps[quote.id]) {
-    quoteTimestamps[quote.id] = { text: formatTimestamp(now), iso: now.toISOString() };
+  // Only display the original saved time; older quotes may not have one.
+  if (quote.generatedAt) {
+    var generatedAt = new Date(quote.generatedAt);
+    if (!Number.isNaN(generatedAt.getTime())) {
+      $('<time class="quote-timestamp"></time>')
+        .attr('datetime', generatedAt.toISOString())
+        .text('Generated ' + formatTimestamp(generatedAt)).appendTo(block);
+    }
   }
-  var stamp = quoteTimestamps[quote.id];
-  $('<time class="quote-timestamp"></time>')
-    .attr('datetime', stamp.iso).text('Generated ' + stamp.text).appendTo(block);
   item.appendTo('ul#quotestream');
 }
