@@ -61,7 +61,7 @@ function createApp(options) {
           headers: { 'X-TheySaidSo-Api-Secret': theySaidSoApiKey }
         });
         if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
-        const candidate = (await apiResponse.json()).contents?.quotes?.[0];
+        const candidate = (await apiResponse.json())?.contents?.quotes?.[0];
         if (!candidate || !candidate.quote || !candidate.author ||
           (typeof candidate.id !== 'string' && !Number.isInteger(candidate.id)) ||
           !String(candidate.id).trim()) {

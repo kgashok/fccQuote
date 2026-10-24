@@ -36,7 +36,7 @@ async function startApp(t, fetchImpl, options) {
     databaseFile: options.databaseFile || path.join(directory, 'db.json'),
     fetchImpl,
     theySaidSoApiKey: options.theySaidSoApiKey,
-    logger: { error: function () {} }
+    logger: options.logger || { error: function () {} }
   });
   const server = app.listen(0, '127.0.0.1');
   await new Promise(function (resolve, reject) {
@@ -173,6 +173,32 @@ test('GET /generate requires a They Said So API key without contacting the provi
     error: 'They Said So API key is not configured.'
   });
   assert.equal(stub.calls.length, 0);
+});
+
+test('GET /generate handles empty or malformed They Said So responses without saving a quote', async function (t) {
+  const errors = [];
+  const stub = stubFetch([
+    upstreamResponse(null),
+    upstreamResponse({ contents: { quotes: [] } })
+  ]);
+  const baseUrl = await startApp(t, stub.fetchImpl, {
+    theySaidSoApiKey: 'test-api-key',
+    logger: { error: function (_message, error) { errors.push(error); } }
+  });
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const response = await fetch(baseUrl + '/generate?source=they-said-so');
+    assert.equal(response.status, 502);
+    assert.deepEqual(await response.json(), {
+      error: 'Could not fetch a quote right now. Please try again.'
+    });
+  }
+
+  assert.equal(stub.calls.length, 2);
+  assert.ok(errors.every(function (error) {
+    return error.message === 'Quote source returned invalid data';
+  }));
+  assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), []);
 });
 
 test('GET /generate saves a quote that appears in /responses and /print/:id', async function (t) {
