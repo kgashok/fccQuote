@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const low = require('lowdb');
@@ -9,6 +10,9 @@ function createApp(options) {
   const databaseFile = options.databaseFile || path.join(__dirname, '.data', 'db.json');
   const fetchQuote = options.fetchImpl || global.fetch;
   const logger = options.logger || console;
+  const theySaidSoApiKey = options.theySaidSoApiKey === undefined
+    ? process.env.THEYSAIDSO_API_KEY
+    : options.theySaidSoApiKey;
 
   fs.mkdirSync(path.dirname(databaseFile), { recursive: true });
   const db = low(new FileSync(databaseFile));
@@ -28,8 +32,11 @@ function createApp(options) {
   app.get('/generate', async function (request, response) {
     const seed = request.query.rnumber;
     const source = request.query.source || 'dummyjson';
-    if (source !== 'dummyjson' && source !== 'favqs') {
+    if (!['dummyjson', 'favqs', 'they-said-so'].includes(source)) {
       return response.status(400).json({ error: 'Choose a supported quote source.' });
+    }
+    if (source === 'they-said-so' && !theySaidSoApiKey) {
+      return response.status(503).json({ error: 'They Said So API key is not configured.' });
     }
     if (seed !== undefined && !/^\d{1,6}$/.test(seed || '')) {
       return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
@@ -48,6 +55,21 @@ function createApp(options) {
           throw new Error('Quote source returned invalid data');
         }
         data = { id: -candidate.id, quote: candidate.body, author: candidate.author };
+      } else if (source === 'they-said-so') {
+        const apiResponse = await fetchQuote('https://quotes.rest/qod?language=en', {
+          ...fetchOptions,
+          headers: { 'X-TheySaidSo-Api-Secret': theySaidSoApiKey }
+        });
+        if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
+        const candidate = (await apiResponse.json()).contents?.quotes?.[0];
+        if (!candidate || !candidate.quote || !candidate.author ||
+          (typeof candidate.id !== 'string' && !Number.isInteger(candidate.id)) ||
+          !String(candidate.id).trim()) {
+          throw new Error('Quote source returned invalid data');
+        }
+        const id = 'they-said-so-' +
+          crypto.createHash('sha256').update(String(candidate.id)).digest('hex');
+        data = { id, quote: candidate.quote, author: candidate.author };
       } else {
         let requestedId;
         if (seed !== undefined) {
@@ -77,7 +99,7 @@ function createApp(options) {
       const quote = {
         quoteText: data.quote,
         quoteAuthor: data.author,
-        quoteLink: '/print/' + data.id,
+        quoteLink: '/print/' + encodeURIComponent(data.id),
         id: data.id,
         generatedAt: new Date().toISOString()
       };
@@ -93,7 +115,9 @@ function createApp(options) {
   });
 
   app.get('/print/:id', function (request, response) {
-    const quote = db.get('quotes').find({ id: Number(request.params.id) }).value();
+    const quote = db.get('quotes').find(function (savedQuote) {
+      return String(savedQuote.id) === request.params.id;
+    }).value();
     if (!quote) return response.sendStatus(404);
     const escape = function (text) {
       return String(text).replace(/[&<>"']/g, function (char) {

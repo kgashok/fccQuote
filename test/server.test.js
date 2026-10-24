@@ -35,6 +35,7 @@ async function startApp(t, fetchImpl, options) {
   const app = createApp({
     databaseFile: options.databaseFile || path.join(directory, 'db.json'),
     fetchImpl,
+    theySaidSoApiKey: options.theySaidSoApiKey,
     logger: { error: function () {} }
   });
   const server = app.listen(0, '127.0.0.1');
@@ -125,6 +126,53 @@ test('GET /generate can fetch and save the FavQs quote of the day', async functi
   ]);
   assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);
   assert.equal((await fetch(baseUrl + '/print/-123')).status, 200);
+});
+
+test('GET /generate can fetch and save the authenticated They Said So quote of the day', async function (t) {
+  const response = upstreamResponse({
+    contents: {
+      quotes: [{ id: 'quote-123', quote: 'A They Said So quote', author: 'TSS Author' }]
+    }
+  });
+  const stub = stubFetch([response, response]);
+  const baseUrl = await startApp(t, stub.fetchImpl, { theySaidSoApiKey: 'test-api-key' });
+
+  const page = await (await fetch(baseUrl + '/')).text();
+  assert.match(page, /<option value="they-said-so">They Said So \(Quote of the Day\)<\/option>/);
+
+  const first = await (await fetch(baseUrl + '/generate?source=they-said-so')).json();
+  const repeated = await (await fetch(baseUrl + '/generate?source=they-said-so')).json();
+  assert.deepEqual(first, {
+    quoteText: 'A They Said So quote',
+    quoteAuthor: 'TSS Author',
+    quoteLink: '/print/' + first.id,
+    id: first.id,
+    generatedAt: first.generatedAt
+  });
+  assert.match(first.id, /^they-said-so-[a-f0-9]{64}$/);
+  assert.deepEqual(repeated, first);
+  assert.deepEqual(stub.calls.map(function (call) { return call.url; }), [
+    'https://quotes.rest/qod?language=en',
+    'https://quotes.rest/qod?language=en'
+  ]);
+  assert.ok(stub.calls.every(function (call) {
+    return call.options.headers['X-TheySaidSo-Api-Secret'] === 'test-api-key' &&
+      call.options.signal instanceof AbortSignal;
+  }));
+  assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);
+  assert.equal((await fetch(baseUrl + first.quoteLink)).status, 200);
+});
+
+test('GET /generate requires a They Said So API key without contacting the provider', async function (t) {
+  const stub = stubFetch([]);
+  const baseUrl = await startApp(t, stub.fetchImpl, { theySaidSoApiKey: '' });
+
+  const response = await fetch(baseUrl + '/generate?source=they-said-so');
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), {
+    error: 'They Said So API key is not configured.'
+  });
+  assert.equal(stub.calls.length, 0);
 });
 
 test('GET /generate saves a quote that appears in /responses and /print/:id', async function (t) {
