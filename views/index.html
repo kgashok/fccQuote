@@ -34,6 +34,11 @@
         </ul>
       </section>
       <form>
+        <label for="quoteSource">Quote source:</label>
+        <select id="quoteSource">
+          <option value="dummyjson">DummyJSON (random quotes)</option>
+          <option value="favqs">FavQs (Quote of the Day)</option>
+        </select>
         <button id="quoteButton" type="submit">Get Quote!</button>
       </form>
       <button type="button" onclick="clearTheBox()">Clear display</button>

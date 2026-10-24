@@ -27,6 +27,10 @@ function createApp(options) {
 
   app.get('/generate', async function (request, response) {
     const seed = request.query.rnumber;
+    const source = request.query.source || 'dummyjson';
+    if (source !== 'dummyjson' && source !== 'favqs') {
+      return response.status(400).json({ error: 'Choose a supported quote source.' });
+    }
     if (seed !== undefined && !/^\d{1,6}$/.test(seed || '')) {
       return response.status(400).json({ error: 'Enter a number between 0 and 999999.' });
     }
@@ -34,31 +38,42 @@ function createApp(options) {
     try {
       const lastQuote = db.get('quotes').last().value();
       const fetchOptions = { signal: AbortSignal.timeout(10000) };
-      let requestedId;
-      if (seed !== undefined) {
-        const countResponse = await fetchQuote('https://dummyjson.com/quotes?limit=1', fetchOptions);
-        if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
-        const count = (await countResponse.json()).total;
-        if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
-        requestedId = Number(seed) % count + 1;
-      }
       let data;
-      for (let attempt = 0; attempt < 5; attempt++) {
-        const quoteUrl = attempt === 0 && requestedId !== undefined
-          ? 'https://dummyjson.com/quotes/' + requestedId
-          : 'https://dummyjson.com/quotes/random';
-        const apiResponse = await fetchQuote(quoteUrl, fetchOptions);
+      if (source === 'favqs') {
+        const apiResponse = await fetchQuote('https://favqs.com/api/qotd', fetchOptions);
         if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
-        const candidate = await apiResponse.json();
-        if (!candidate.quote || !candidate.author || !Number.isInteger(candidate.id)) {
+        const candidate = (await apiResponse.json()).quote;
+        if (!candidate || !candidate.body || !candidate.author ||
+          !Number.isInteger(candidate.id) || candidate.id < 1) {
           throw new Error('Quote source returned invalid data');
         }
-        if (!lastQuote || candidate.id !== lastQuote.id) {
-          data = candidate;
-          break;
+        data = { id: -candidate.id, quote: candidate.body, author: candidate.author };
+      } else {
+        let requestedId;
+        if (seed !== undefined) {
+          const countResponse = await fetchQuote('https://dummyjson.com/quotes?limit=1', fetchOptions);
+          if (!countResponse.ok) throw new Error('Quote source returned ' + countResponse.status);
+          const count = (await countResponse.json()).total;
+          if (!Number.isInteger(count) || count < 1) throw new Error('Quote source returned invalid count');
+          requestedId = Number(seed) % count + 1;
         }
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const quoteUrl = attempt === 0 && requestedId !== undefined
+            ? 'https://dummyjson.com/quotes/' + requestedId
+            : 'https://dummyjson.com/quotes/random';
+          const apiResponse = await fetchQuote(quoteUrl, fetchOptions);
+          if (!apiResponse.ok) throw new Error('Quote source returned ' + apiResponse.status);
+          const candidate = await apiResponse.json();
+          if (!candidate.quote || !candidate.author || !Number.isInteger(candidate.id)) {
+            throw new Error('Quote source returned invalid data');
+          }
+          if (!lastQuote || candidate.id !== lastQuote.id) {
+            data = candidate;
+            break;
+          }
+        }
+        if (!data) throw new Error('Quote source repeated the previous quote');
       }
-      if (!data) throw new Error('Quote source repeated the previous quote');
       const quote = {
         quoteText: data.quote,
         quoteAuthor: data.author,
