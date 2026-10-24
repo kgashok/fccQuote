@@ -6,7 +6,7 @@
 
 ## Running
 
-Install dependencies with `npm install` and start with `npm start`. The server listens on port 5000 by default (or `PORT` when provided). Choose a source before generating a quote: DummyJSON supplies random quotes, while FavQs and They Said So supply their Quote of the Day. They Said So requires an API key in the `THEYSAIDSO_API_KEY` environment variable. Quotes are saved locally in `.data/db.json`; the DummyJSON and FavQs sources do not require API keys.
+Install dependencies with `npm install` and start with `npm start`. The server listens on port 5000 by default (or `PORT` when provided). Choose a source before generating a quote: DummyJSON and Quotable supply random quotes, while FavQs and They Said So supply their Quote of the Day. Quotable supports optional tag filters (comma for AND, `|` for OR) and minimum/maximum quote lengths. They Said So requires an API key in the `THEYSAIDSO_API_KEY` environment variable. Quotes are saved locally in `.data/db.json`; DummyJSON, FavQs, and Quotable do not require API keys.
   
   
 ## Updates on Express framework

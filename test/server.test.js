@@ -163,6 +163,56 @@ test('GET /generate can fetch and save the authenticated They Said So quote of t
   assert.equal((await fetch(baseUrl + first.quoteLink)).status, 200);
 });
 
+test('GET /generate fetches and saves a filtered Quotable quote without an API key', async function (t) {
+  const quotableResponse = upstreamResponse([{
+    _id: 'quote-456',
+    content: 'A Quotable quote',
+    author: 'Quotable Author'
+  }]);
+  const stub = stubFetch([quotableResponse, quotableResponse]);
+  const baseUrl = await startApp(t, stub.fetchImpl);
+
+  const page = await (await fetch(baseUrl + '/')).text();
+  assert.match(page, /<option value="quotable">Quotable \(random quotes\)<\/option>/);
+  assert.match(page, /id="quotableOptions" hidden/);
+  assert.match(page, /id="quoteTags"/);
+  assert.match(page, /id="minLength"/);
+  assert.match(page, /id="maxLength"/);
+
+  const route = '/generate?source=quotable&tags=technology%7Chistory&minLength=12&maxLength=140';
+  const first = await (await fetch(baseUrl + route)).json();
+  const repeated = await (await fetch(baseUrl + route)).json();
+  assert.deepEqual(first, {
+    quoteText: 'A Quotable quote',
+    quoteAuthor: 'Quotable Author',
+    quoteLink: '/print/quotable-quote-456',
+    id: 'quotable-quote-456',
+    generatedAt: first.generatedAt
+  });
+  assert.deepEqual(repeated, first);
+  assert.equal(stub.calls[0].url,
+    'https://api.quotable.io/quotes/random?tags=technology%7Chistory&minLength=12&maxLength=140');
+  assert.ok(stub.calls.every(function (call) {
+    return call.options.signal instanceof AbortSignal;
+  }));
+  assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);
+  assert.equal((await fetch(baseUrl + first.quoteLink)).status, 200);
+});
+
+test('GET /generate rejects invalid Quotable filters without contacting the provider', async function (t) {
+  const stub = stubFetch([]);
+  const baseUrl = await startApp(t, stub.fetchImpl);
+
+  for (const route of [
+    '/generate?source=quotable&minLength=-1',
+    '/generate?source=quotable&minLength=20&maxLength=10',
+    '/generate?source=quotable&tags=technology%7C'
+  ]) {
+    assert.equal((await fetch(baseUrl + route)).status, 400, route);
+  }
+  assert.equal(stub.calls.length, 0);
+});
+
 test('GET /generate requires a They Said So API key without contacting the provider', async function (t) {
   const stub = stubFetch([]);
   const baseUrl = await startApp(t, stub.fetchImpl, { theySaidSoApiKey: '' });
