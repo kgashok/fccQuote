@@ -142,3 +142,12 @@ ul {
 blockquote { 
   margin: 16px;
 }
+
+/* Subtle secondary text for the generation timestamp; wraps on small screens */
+.quote-timestamp {
+  display: block;
+  margin-top: 0.4em;
+  font-size: 0.75em;
+  color: #666;
+  overflow-wrap: anywhere;
+}
