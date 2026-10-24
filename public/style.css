@@ -107,7 +107,7 @@ form {
   max-width: 340px;
   border-radius: 3px;
 }
-input {
+input, select {
   display: block;
   margin-bottom: 10px;
   padding: 5px;

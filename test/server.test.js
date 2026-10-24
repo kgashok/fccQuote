@@ -99,6 +99,34 @@ test('GET /generate without a number fetches a new random quote on each click', 
   assert.deepEqual(saved, [second, first]);
 });
 
+test('GET /generate can fetch and save the FavQs quote of the day', async function (t) {
+  const favqsResponse = upstreamResponse({
+    quote: { id: 123, body: 'A FavQs quote', author: 'FavQs Author' }
+  });
+  const stub = stubFetch([favqsResponse, favqsResponse]);
+  const baseUrl = await startApp(t, stub.fetchImpl);
+
+  const page = await (await fetch(baseUrl + '/')).text();
+  assert.match(page, /<option value="favqs">FavQs \(Quote of the Day\)<\/option>/);
+
+  const first = await (await fetch(baseUrl + '/generate?source=favqs')).json();
+  const repeated = await (await fetch(baseUrl + '/generate?source=favqs')).json();
+  assert.deepEqual(first, {
+    quoteText: 'A FavQs quote',
+    quoteAuthor: 'FavQs Author',
+    quoteLink: '/print/-123',
+    id: -123,
+    generatedAt: first.generatedAt
+  });
+  assert.deepEqual(repeated, first);
+  assert.deepEqual(stub.calls.map(function (call) { return call.url; }), [
+    'https://favqs.com/api/qotd',
+    'https://favqs.com/api/qotd'
+  ]);
+  assert.deepEqual(await (await fetch(baseUrl + '/responses')).json(), [first]);
+  assert.equal((await fetch(baseUrl + '/print/-123')).status, 200);
+});
+
 test('GET /generate saves a quote that appears in /responses and /print/:id', async function (t) {
   const stub = stubFetch([
     upstreamResponse({ total: 100 }),

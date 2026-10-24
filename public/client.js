@@ -12,7 +12,7 @@ $(function () {
     event.preventDefault();
     var button = $('#quoteButton').prop('disabled', true);
     try {
-      await loadJson('/generate');
+      await loadJson('/generate?source=' + encodeURIComponent($('#quoteSource').val()));
       await refreshQuotes();
     } catch (error) {
       showError(error);
