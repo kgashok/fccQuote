@@ -5,7 +5,23 @@ function formatTimestamp(date) {
     ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
 }
 
+function updateOnlineStatus() {
+  var offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+  $('#offlineBanner').prop('hidden', !offline);
+  return offline;
+}
+
 $(function () {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(console.error);
+      });
+    }
+  }
+  updateOnlineStatus();
   refreshQuotes().catch(showError);
 
   $('form').submit(async function (event) {
@@ -25,7 +41,12 @@ $(function () {
 });
 
 async function loadJson(url) {
-  var response = await fetch(url);
+  var response;
+  try {
+    response = await fetch(url);
+  } catch (error) {
+    throw new Error('You appear to be offline. Please reconnect and try again.');
+  }
   if (!response.ok) {
     var body = await response.json().catch(function () { return {}; });
     throw new Error(body.error || 'Request failed (' + response.status + ')');
