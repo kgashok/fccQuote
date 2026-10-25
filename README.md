@@ -17,3 +17,14 @@ Install dependencies with `npm install` and start with `npm start`. The server l
 ## Using Unirest 
   - http://unirest.io/nodejs.html
   
+## Progressive Web App
+
+The app is installable and its shell works offline.
+
+- `public/manifest.webmanifest` and `public/icons/` describe the app; they are linked from `views/index.html`.
+- `public/sw.js` precaches the shell (`/`, CSS, JS, icons, jQuery CDN) and serves it network-first with cache fallback. Quote generation (`/generate`) is never cached. Old `fccquote-*` caches are deleted on activate; bump `CACHE_VERSION` in `sw.js` to release changes.
+- `client.js` registers the worker, shows an offline banner, and shows a friendly message if a quote fetch fails offline.
+
+Testing: run `npm start`, open http://localhost:5000 (localhost counts as a secure context), check DevTools > Application > Manifest / Service Workers, tick "Offline" and reload, and try "Get Quote!" to see the message. Use the browser's Install action to install.
+
+Known limitations: new quotes cannot be generated offline; previously loaded saved quotes are shown from cache. Production needs HTTPS.
