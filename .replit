@@ -30,10 +30,6 @@ task = "shell.exec"
 args = "npm start"
 waitForPort = 5000
 
-[[ports]]
-localPort = 5000
-externalPort = 80
-
 [deployment]
 deploymentTarget = "vm"
 run = ["npm", "start"]
@@ -41,3 +37,19 @@ run = ["npm", "start"]
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 180000
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[[ports]]
+localPort = 23738
+externalPort = 3001
+
+[[ports]]
+localPort = 23936
+externalPort = 3000
