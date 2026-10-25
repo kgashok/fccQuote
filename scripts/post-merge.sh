@@ -1,4 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 pnpm install --frozen-lockfile
-pnpm --filter db push
+# Quote history uses the existing JSON store. No PostgreSQL schema migration
+# is needed for this app; do not push the unused template schema on merges.
