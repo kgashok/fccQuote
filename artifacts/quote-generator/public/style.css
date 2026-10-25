@@ -1,0 +1,144 @@
+  /* styles */
+/* called by your view template */
+/* You might want to try something fancier: */
+/* less: http://lesscss.org/ */
+/*
+.module {
+margin: 10px;
+width: 600px;
+height: 800px;
+float: left;
+background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoes.jpg);
+background-size: cover;
+}
+.darken {
+background-image: 
+linear-gradient(
+rgba(0, 0, 0, 0.5),
+rgba(0, 0, 0, 0.5)
+),
+url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoes.jpg);
+}
+*/
+header { 
+  background-color: wheat;
+  font-size: .75rem;
+}
+footer {
+  /*background-color: darkorange; */
+  /*margin-top: 50px; */
+  padding-top: 25px;
+  border-top: 1px solid lightgrey;
+}
+footer > a {
+  /*color: #BBBBBB; */
+  color: darkorange;
+}
+.nicejob {
+  text-decoration: line-through;
+}
+div#share > a {
+  display: inline-block;
+  margin: 8px 0;
+  color: #0865a7;
+  font-size: 14px;
+}
+a#quote:hover {
+  color: darkorange;  
+  font-style: normal;  
+}
+a#quote {
+  color: black;  
+  /*font-weight: bolder; */
+  text-decoration: none; /* no underline */
+}
+.quote { 
+  font-size: 18px; 
+  background-color: ivory;
+  padding: 3px;
+  font-style: italic;
+  /*font-family: Consolas, monaco, monospace;*/
+  /*font-family: "Arial Narrow", Arial, sans-serif;*/
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  /*font-family: Roboto; */
+}
+
+#quotestream ul:first-child .quote {
+  font-size: 32px;
+  background-color: ghostwhite;
+  border: 3px dotted olive;
+  font-style: normal;
+}
+
+#quotestream ul:first-child .quote:hover {
+  border: 4px solid lime;
+  font-style: italic;
+}
+
+body {
+  background-color: beige;
+  /*background-image: url("http://blog-imgs-92.fc2.com/s/l/o/slorakusyou/hate.jpg");*/
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: helvetica, arial, sans-serif;
+  margin: 20px;
+}
+li { background: white; }
+li:nth-child(odd) { background: silver; }
+h1 {
+  /*font-weight: bold; */
+  font-size: 1.2em;
+  color: darkorange;
+}
+
+p {
+  max-width: 600px;
+}
+form {
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: cyan;
+  display: inline-block;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 3px;
+}
+input {
+  display: block;
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 100%;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  font-size: 16px;
+}
+button {
+  font-size: 16px;
+  border-radius: 3px;
+  background-color: lightgrey;
+  border: 1px solid grey;
+  box-shadow: 2px 2px teal;
+  cursor: pointer;
+}
+button:hover {
+  background-color: yellow;
+}
+button:active {
+  box-shadow: none;
+}
+il {
+  /*margin-bottom: 2px;*/
+  font-size: small;
+}
+
+ul { 
+  padding: 2px;
+}
+
+blockquote { 
+  margin: 16px;
+}

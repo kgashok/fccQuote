@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-npm ci --no-audit --no-fund
-npm test
+#!/bin/bash
+set -e
+pnpm install --frozen-lockfile
+pnpm --filter db push
